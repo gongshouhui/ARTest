@@ -15,6 +15,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBOutlet var sceneView: ARSCNView!
     //捕获的平面节点
     var captureNode: SCNNode!
+    var movedNode: SCNNode?
     var rotateNode: RotateNode?
     var currentAngle: CGFloat = 0.0
     
@@ -49,6 +50,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.delegate = self
         
         sceneView.showsStatistics = true
+        //sceneView.allowsCameraControl = true
+        
         // Create a new scene
 //        let scene = SCNScene(named: "art.scnassets/cup/cup.scn")!
 //        //创建一个节点
@@ -60,7 +63,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     //scnview 添加手势
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandle(gesture:)))
         sceneView.addGestureRecognizer(pan)
-        
+
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandle(gesture:)))
         sceneView.addGestureRecognizer(tap)
         
@@ -105,52 +108,83 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     @objc func panHandle(gesture: UIPanGestureRecognizer)  {
       //判断手势状态，
-        print("移动点",gesture.location(in: self.sceneView))
-        print("手指状态",gesture.state.rawValue)
-        
-        let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-//        guard results.count > 0 else{
-//               return
-//           }
-        
-       
-        if let node = results.first?.node as? RotateNode {//命中旋转小节点
-            print("状态",gesture.state.rawValue)
-            if self.rotateNode == nil {//一次拖动只取第一次命中的节点
-                self.rotateNode = node
-            }
-           
-        }
-        
-        if gesture.state == .began  && self.rotateNode != nil {
-            self.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
-        }
       
-        if gesture.state == .ended && self.rotateNode != nil {
-            self.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow")
-            self.rotateNode = nil;
-            
+        
+        //拖动
+        if gesture.state == .began {//命中节点
+
+            let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+            guard results.count > 0 else{
+                   return
+               }
+            //命中节点直接移动平面节点
+            movedNode = captureNode
         }
-        
-        //旋转 ,首先选中旋转小节点
-        
-        if self.rotateNode != nil { //可根据拖动距离旋转
-            let parentNode = self.rotateNode?.parent?.parent;
-            let transtion = gesture.translation(in: gesture.view)
-            let x: CGFloat = transtion.x
-            let y: CGFloat = transtion.y
-            let newAngle: CGFloat = x*2*CGFloat(Double.pi)/180
-            
-            print("旋转角度:" + "\(newAngle)")
-            
-            var currentAngle: CGFloat = CGFloat(parentNode?.eulerAngles.y ?? 0.0)
-            print("当前欧拉角",currentAngle)
-            //除以100 是降低旋转灵敏度
-            self.currentAngle += newAngle/100
-            
-            parentNode?.eulerAngles = SCNVector3(0, self.currentAngle, 0)
+        if gesture.state == .changed {
+            if movedNode != nil {
+
+                //let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+                let results: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
+
+                let lastResult = results.last
+                let Matrix4 = lastResult?.worldTransform
+                print("jjj",Matrix4)
+
+                let vector = SCNVector3(Matrix4?.columns.3.x ?? 0.0, Matrix4?.columns.3.y ?? 0.0, Matrix4?.columns.3.z ?? 0.0)
+
+                movedNode?.position = vector;
+
+            }
         }
+//
         
+        
+        
+        
+        
+//        let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+////        guard results.count > 0 else{
+////               return
+////           }
+//
+//
+//        if let node = results.first?.node as? RotateNode {//命中旋转小节点
+//            print("状态",gesture.state.rawValue)
+//            if self.rotateNode == nil {//一次拖动只取第一次命中的节点
+//                self.rotateNode = node
+//            }
+//
+//        }
+//
+//        if gesture.state == .began  && self.rotateNode != nil {
+//            self.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
+//        }
+//
+//        if gesture.state == .ended && self.rotateNode != nil {
+//            self.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow")
+//            self.rotateNode = nil;
+//
+//        }
+//
+//        //旋转 ,首先选中旋转小节点
+//
+//        if self.rotateNode != nil { //可根据拖动距离旋转
+//            let parentNode = self.rotateNode?.parent?.parent;
+//            let transtion = gesture.translation(in: gesture.view)
+//            let x: CGFloat = transtion.x
+//            let y: CGFloat = transtion.y
+//            let newAngle: CGFloat = x*2*CGFloat(Double.pi)/180
+//
+//            print("旋转角度:" + "\(newAngle)")
+//
+//            var currentAngle: CGFloat = CGFloat(parentNode?.eulerAngles.y ?? 0.0)
+//            print("当前欧拉角",currentAngle)
+//            //除以100 是降低旋转灵敏度
+//            self.currentAngle += newAngle/100
+//
+//            parentNode?.eulerAngles = SCNVector3(0, self.currentAngle, 0)
+//        }
+//
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -174,12 +208,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             let touch = touches.first;
             let firstResult = sceneView.hitTest((touch?.location(in: sceneView))!, options: nil).first;
         if let node = firstResult?.node as? RotateNode {
-            print("touch")
+           
         }
     }
    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        print("进入")
+       
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
