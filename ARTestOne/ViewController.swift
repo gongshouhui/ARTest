@@ -133,6 +133,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 let vector = SCNVector3(Matrix4?.columns.3.x ?? 0.0, Matrix4?.columns.3.y ?? 0.0, Matrix4?.columns.3.z ?? 0.0)
 
                 movedNode?.position = vector;
+                //movedNode?.transform
 
             }
         }
