@@ -17,7 +17,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     var captureNode: SCNNode!
     var movedNode: SCNNode?
     var rotateNode: RotateNode?
-    var currentAngle: CGFloat = 0.0
+    private var newAngleY: CGFloat = 0.0
+    private var currentAngleY: CGFloat = 0.0
+    var c1: SCNVector3?
+    var c2: SCNVector3?
+    var p1: SCNVector3?
+    var p2: SCNVector3?
+    
+    
     
     
     
@@ -91,11 +98,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        sceneView.scene.rootNode.addChildNode(bottomNode)
       
     }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("dddd")
+    }
     @objc func tapHandle(gesture: UITapGestureRecognizer)  {
-        print("点击了")
+       
         let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
         let hitTest = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .estimatedHorizontalPlane)
-        print(hitTest)
+       
         guard results.count > 0 else{
                return
            }
@@ -109,40 +119,101 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @objc func panHandle(gesture: UIPanGestureRecognizer)  {
       //判断手势状态，
       
-        
-        //拖动
-        if gesture.state == .began {//命中节点
-
-            let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-            guard results.count > 0 else{
-                   return
-               }
-            //命中节点直接移动平面节点
-            movedNode = captureNode
-        }
-        if gesture.state == .changed {
-            if movedNode != nil {
-
-                //let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-                let results: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
-
-                let lastResult = results.last
-                let Matrix4 = lastResult?.worldTransform
-                print("jjj",Matrix4)
-
-                let vector = SCNVector3(Matrix4?.columns.3.x ?? 0.0, Matrix4?.columns.3.y ?? 0.0, Matrix4?.columns.3.z ?? 0.0)
-
-                movedNode?.position = vector;
-                //movedNode?.transform
-
-            }
-        }
+//        //拖动
+//        if gesture.state == .began {//命中节点
+//
+//            let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+//            guard results.count > 0 else{
+//                   return
+//               }
+//            //命中节点直接移动平面节点
+//            movedNode = captureNode
+//        }
+//        if gesture.state == .changed {
+//            if movedNode != nil {
+//
+//                //let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+//                let results: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
+//
+//                let lastResult = results.last
+//                let Matrix4 = lastResult?.worldTransform
+//                print("jjj",Matrix4)
+//
+//                let vector = SCNVector3(Matrix4?.columns.3.x ?? 0.0, Matrix4?.columns.3.y ?? 0.0, Matrix4?.columns.3.z ?? 0.0)
+//
+//                movedNode?.position = vector;
+//                //movedNode?.transform
+//
+//            }
+//        }
 //
         
         
         
+       
+        switch gesture.state {
+        case .began:
+           
+            let arResults = self.sceneView.hitTest(gesture.location(in: sceneView), types: .featurePoint)
+            if let arResult = arResults.first {
+                c2 = SCNVector3(arResult.worldTransform.columns.3.x,arResult.worldTransform.columns.3.y , arResult.worldTransform.columns.3.z)
+            }
+            
+            let SCNHitResults:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+            guard SCNHitResults.count > 0 else{
+                   return
+               }
+            if let node = SCNHitResults.first?.node as? RotateNode {//命中旋转小节点,做旋转
+                
+                if self.rotateNode == nil {//一次拖动只取第一次命中的节点
+                    self.rotateNode = node
+                }
+   
+                node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
+            } else {
+                //命中节点直接移动平面节点
+                movedNode = captureNode
+            }
+            break
+        case .changed:
+            let position = gesture.location(in: self.sceneView)
+            let hitTestResults = sceneView.hitTest(position, types: .existingPlane)
+            if let hitResult = hitTestResults.first {
+                p2 = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
+            }
+            //旋转
+                //旋转 ,首先选中旋转小节点
+
+                if self.rotateNode != nil { //可根据拖动距离旋转
+                    let parentNode = self.rotateNode?.parent?.parent;
+                    let transtion = gesture.translation(in: gesture.view)
+                    self.newAngleY =  CGFloat(transtion.x) * (CGFloat) (Double.pi)/180
+                    self.newAngleY += self.currentAngleY
+                    parentNode?.eulerAngles.y = Float(self.newAngleY)
+                }
+                
+        case .ended:
+            let position = gesture.location(in: self.sceneView)
+            let hitTestResults = sceneView.hitTest(position, types: .existingPlane)
+            if let hitResult = hitTestResults.first {
+                p2 = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
+            }
+          //旋转完颜色恢复
+        if self.rotateNode != nil {
+            self.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow")
+            self.rotateNode = nil;
+        }
+            
+        default:
+            break
+        }
+        
+        if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
+            self.currentAngleY = self.newAngleY
+        }
         
         
+//
 //        let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
 ////        guard results.count > 0 else{
 ////               return
@@ -187,7 +258,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        }
 //
     }
-    
+    func getAngle(from: SCNVector3,to: SCNVector3,yuandian: SCNVector3) -> CGFloat {
+        let x1 = from.x - yuandian.x
+        let y1 = from.y - yuandian.y
+        let x2 = to.x - yuandian.x
+        let y2 = to.y - yuandian.y
+        let x = x1 * x2 + y1 * y2
+        let y = x1 * y2 - x2 * y1
+        let angel = acos(x/sqrt(x * x + y * y))
+        return CGFloat(angel)
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
