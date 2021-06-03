@@ -13,20 +13,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet weak var add: UIButton!
     @IBOutlet var sceneView: ARSCNView!
-    //捕获的平面节点
-    var captureNode: SCNNode!
+    //取hitTest命中的节点
     var movedNode: SCNNode?
     var rotateNode: RotateNode?
     private var newAngleY: CGFloat = 0.0
     private var currentAngleY: CGFloat = 0.0
-    var c1: SCNVector3?
-    var c2: SCNVector3?
-    var p1: SCNVector3?
-    var p2: SCNVector3?
-    
-    
-    
-    
+   
     
     
     lazy var arSessionConfiguration: ARWorldTrackingConfiguration = {
@@ -55,39 +47,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         sceneView.delegate = self
-        
         sceneView.showsStatistics = true
         //sceneView.allowsCameraControl = true
+        add.isHidden = true
         
-        // Create a new scene
-//        let scene = SCNScene(named: "art.scnassets/cup/cup.scn")!
-//        //创建一个节点
-//        let ratoteNode = BottomNode()
-//        ratoteNode.position = SCNVector3(0, -0.1, -0.3)
-//        // Set the scene to the view
-//        sceneView.scene.rootNode.addChildNode(ratoteNode);
-//
+
     //scnview 添加手势
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panHandle(gesture:)))
         sceneView.addGestureRecognizer(pan)
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandle(gesture:)))
         sceneView.addGestureRecognizer(tap)
-        
-        
-        
-        //添加模型
-
-//        let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
-//        let cupNode = cupScene?.rootNode.childNodes.first
-//        cupNode?.position = SCNVector3(0, -0.2, -0.3)
-//        sceneView.scene = cupScene!;
-////
-//        let bottomNode = BottomNode()
-//        //y方向scale设置为零后，hitTest捕捉不到节点
-//        //bottomNode.scale = SCNVector3(1.5, 0, 1.5)
-//        bottomNode.position = SCNVector3(0, -0.2-0.01, -0.3)
-//        sceneView.scene.rootNode.addChildNode(bottomNode)
         
         
         
@@ -98,67 +68,34 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        sceneView.scene.rootNode.addChildNode(bottomNode)
       
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        sceneView.session.pause()
+    }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("dddd")
     }
+    //点击添加节点
     @objc func tapHandle(gesture: UITapGestureRecognizer)  {
        
-        let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-        let hitTest = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .estimatedHorizontalPlane)
-       
-        guard results.count > 0 else{
-               return
-           }
-        for result in results {
-            if let node = result.node as? BottomNode {
-                print(node.name ?? "rr")
-            }
-            print(result.node.name!)
-        }
+//        let hitTest = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .estimatedHorizontalPlane)
+//
+//        guard results.count > 0 else{
+//               return
+//           }
+//        for result in results {
+//            if let node = result.node as? BottomNode {
+//                print(node.name ?? "rr")
+//            }
+//            print(result.node.name!)
+//        }
     }
     @objc func panHandle(gesture: UIPanGestureRecognizer)  {
-      //判断手势状态，
-      
-//        //拖动
-//        if gesture.state == .began {//命中节点
-//
-//            let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-//            guard results.count > 0 else{
-//                   return
-//               }
-//            //命中节点直接移动平面节点
-//            movedNode = captureNode
-//        }
-//        if gesture.state == .changed {
-//            if movedNode != nil {
-//
-//                //let results:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-//                let results: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
-//
-//                let lastResult = results.last
-//                let Matrix4 = lastResult?.worldTransform
-//                print("jjj",Matrix4)
-//
-//                let vector = SCNVector3(Matrix4?.columns.3.x ?? 0.0, Matrix4?.columns.3.y ?? 0.0, Matrix4?.columns.3.z ?? 0.0)
-//
-//                movedNode?.position = vector;
-//                //movedNode?.transform
-//
-//            }
-//        }
-//
-        
-        
-        
-       
+  
         switch gesture.state {
         case .began:
            
-            let arResults = self.sceneView.hitTest(gesture.location(in: sceneView), types: .featurePoint)
-            if let arResult = arResults.first {
-                c2 = SCNVector3(arResult.worldTransform.columns.3.x,arResult.worldTransform.columns.3.y , arResult.worldTransform.columns.3.z)
-            }
-            
             let SCNHitResults:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
             guard SCNHitResults.count > 0 else{
                    return
@@ -171,16 +108,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
    
                 node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
             } else {
-                //命中节点直接移动平面节点
-                movedNode = captureNode
+                if let node = SCNHitResults.first?.node {
+                    movedNode = getModelNode(node: node)
+                }
+                
             }
             break
         case .changed:
-            let position = gesture.location(in: self.sceneView)
-            let hitTestResults = sceneView.hitTest(position, types: .existingPlane)
-            if let hitResult = hitTestResults.first {
-                p2 = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
-            }
+            
             //旋转
                 //旋转 ,首先选中旋转小节点
 
@@ -190,19 +125,27 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                     self.newAngleY =  CGFloat(transtion.x) * (CGFloat) (Double.pi)/180
                     self.newAngleY += self.currentAngleY
                     parentNode?.eulerAngles.y = Float(self.newAngleY)
+                    //旋转和移动只有一个生效
+                    return
                 }
+            if self.movedNode != nil {//做移动动作
+              
+                let ARHitResults: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
+              
+                              let lastResult = ARHitResults.last
+                              let simd4 = lastResult!.worldTransform
+                              let vector = SCNVector3(simd4.columns.3.x, simd4.columns.3.y, simd4.columns.3.z)
+                              movedNode?.worldPosition = vector;
+            }
                 
         case .ended:
-            let position = gesture.location(in: self.sceneView)
-            let hitTestResults = sceneView.hitTest(position, types: .existingPlane)
-            if let hitResult = hitTestResults.first {
-                p2 = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
-            }
+         
           //旋转完颜色恢复
         if self.rotateNode != nil {
             self.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow")
             self.rotateNode = nil;
         }
+            self.movedNode = nil
             
         default:
             break
@@ -258,6 +201,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 //        }
 //
     }
+    //如果有父节点返回父节点,没有返回自己
+    private func getModelNode(node: SCNNode) -> ModelNode? {
+        if let modelNode = node as? ModelNode {
+            return modelNode
+        }
+        guard let parentNode = node.parent else {
+            return nil
+        }
+        return getModelNode(node: parentNode)
+    }
     func getAngle(from: SCNVector3,to: SCNVector3,yuandian: SCNVector3) -> CGFloat {
         let x1 = from.x - yuandian.x
         let y1 = from.y - yuandian.y
@@ -277,13 +230,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         sceneView.session.run(self.arSessionConfiguration)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // Pause the view's session
-        sceneView.session.pause()
-    }
-   
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
             let touch = touches.first;
@@ -298,20 +244,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-        
-//        //获取模型场景
-//        let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
-//        let cupNode = cupScene?.rootNode.childNodes.first
-//        cupNode?.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
-//        //创建底座，添加到cup节点上面
-//        let bottomNode = BottomNode()
-//        bottomNode.scale = SCNVector3(3, 1, 3)
-//        bottomNode.position = SCNVector3(0, -0.03,0)
-//        cupNode?.addChildNode(bottomNode)
-//
-//        node.addChildNode(cupNode!)
-        
-                //获取模型场景
+        //获取模型场景
                
         let cupNode = self.cupScene?.rootNode.childNodes.first
                 cupNode?.position = SCNVector3(planeAnchor.center.x, 0, planeAnchor.center.z)
@@ -319,12 +252,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         self.bottomNode.scale = SCNVector3(3, 1, 3)
         self.bottomNode.position = SCNVector3(0, -0.03,0)
                 cupNode?.addChildNode(self.bottomNode)
-        if cupNode != nil {
-            node.addChildNode(cupNode!)
-        }
-               
-                captureNode = node;
-            
+//        if cupNode != nil {
+//            node.addChildNode(cupNode!)
+//        }
+        
+        let modelNode = ModelNode()
+        movedNode?.position = SCNVector3(0,0,0)
+        modelNode.addChildNode(cupNode!)
+        //modelNode.addChildNode(self.bottomNode)
+        node.addChildNode(modelNode)
     }
     
     
