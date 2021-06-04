@@ -24,7 +24,7 @@
                                 <rect key="frame" x="50" y="94" width="31" height="30"/>
                                 <state key="normal" title="添加"/>
                                 <connections>
-                                    <action selector="add:" destination="BV1-FR-VrT" eventType="touchUpInside" id="lSU-bN-e9c"/>
+                                    <action selector="addButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="8pg-7O-ayQ"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -40,7 +40,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="add" destination="ZpZ-YA-jC8" id="awA-Ue-c52"/>
+                        <outlet property="addButton" destination="ZpZ-YA-jC8" id="otH-Sq-FIG"/>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
                     </connections>
                 </viewController>
