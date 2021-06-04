@@ -32,10 +32,6 @@ class SegmentNode: SCNNode {
         
         let material = plane.firstMaterial!
         material.diffuse.contents = BottomNode.primaryColor
-//        material.isDoubleSided = true
-//        material.ambient.contents = UIColor.black
-//        material.lightingModel = .constant
-//        material.emission.contents = BottomNode.primaryColor
         geometry = plane
     }
     

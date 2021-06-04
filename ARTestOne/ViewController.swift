@@ -54,7 +54,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBAction func addButton(_ sender: UIButton) {
         
         //获取模型场景
-        
+        SCNNode
         let cupNode = self.cupScene?.rootNode.childNodes.first
         cupNode?.position = SCNVector3(self.planeAnchor!.center.x, 0, self.planeAnchor!.center.z)
         //创建底座，添加到cup节点上面
@@ -86,8 +86,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(tapHandle(gesture:)))
         sceneView.addGestureRecognizer(tap)
-        
-        
         
         //        let bottomNode = BottomNode()
         //        //y方向scale设置为零后，hitTest捕捉不到节点
@@ -121,7 +119,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         switch gesture.state {
         case .began:
-            
             let arResults = self.sceneView.hitTest(gesture.location(in: sceneView), types: .existingPlane)
             //获取点的世界坐标
             let currentSimd4 = arResults.last?.worldTransform
@@ -145,13 +142,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 if let node = SCNHitResults.first?.node {
                     movedNode = getModelNode(node: node)
                 }
-                
             }
             break
         case .changed:
-            
-            
-            
             //旋转 ,首先选中旋转小节点
             if self.rotateNode != nil { //根据坐标计算角度
                 
@@ -166,36 +159,33 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 if lastPoint != nil {
                     let angel = getAngle(from: lastPoint!, to: current!, yuandian: planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
                     print("angleg",angel)
-                    
                     let parentNode = self.getModelNode(node: self.rotateNode!)
-                    let transtion = gesture.translation(in: gesture.view)
+                    //let transtion = gesture.translation(in: gesture.view)
                     let clockwise = isClockwise(yuandian: planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
                     print("clockwise",clockwise)
                     if  !clockwise {
                         self.newAngleY =  angel
                         self.newAngleY += self.currentAngleY
                         
-                       
+                        
                         let rotationAcrion =  SCNAction.rotateBy(x: 0, y: angel, z: 0, duration: 0)
                         parentNode!.runAction(rotationAcrion)
                         
-
+                        
                     } else {
                         self.newAngleY =  -angel
                         self.newAngleY += self.currentAngleY
-//                        let rotationAcrion =  SCNAction.rotateBy(x: 0, y: -angel, z: 0, duration: 0)
-//                        parentNode!.runAction(rotationAcrion)
+                        //                        let rotationAcrion =  SCNAction.rotateBy(x: 0, y: -angel, z: 0, duration: 0)
+                        //                        parentNode!.runAction(rotationAcrion)
                     }
                     parentNode?.eulerAngles.y = Float(self.newAngleY)
                 }
-               
+                
                 lastPoint = current
                 self.currentAngleY = self.newAngleY
                 //旋转和移动只有一个生效
                 return
             }
-            
-            
             
             //            //旋转 ,首先选中旋转小节点
             //                if self.rotateNode != nil { //可根据拖动距离旋转
@@ -234,8 +224,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             self.currentAngleY = self.newAngleY
             lastPoint = nil
         }
-        
-        
     }
     //如果有父节点返回父节点,没有返回自己
     private func getModelNode(node: SCNNode) -> ModelNode? {
@@ -248,13 +236,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return getModelNode(node: parentNode)
     }
     private func isClockwise(yuandian p1: SCNVector3,from p2: SCNVector3,to p3: SCNVector3) -> Bool {
-//        p1=(x1,y1), p2=(x2,y2), p3=(x3,y3) 求向量 p12=(x2-x1,y2-y1) p23=(x3-x2,y3-y2) 则当 p12 与 p23 的叉乘（向量积） p12 x p23 = (x2-x1)*(y3-y2)-(y2-y1)*(x3-x2)
+        //        p1=(x1,y1), p2=(x2,y2), p3=(x3,y3) 求向量 p12=(x2-x1,y2-y1) p23=(x3-x2,y3-y2) 则当 p12 与 p23 的叉乘（向量积） p12 x p23 = (x2-x1)*(y3-y2)-(y2-y1)*(x3-x2)
         let p12 = (p2.x - p1.x,p2.z - p1.z)
         let p23 = (p3.x - p2.x,p3.z - p2.z)
         let value = p12.0 * p23.1 - p12.1 * p23.0
         return value > 0
     }
-    func getAngle(from: SCNVector3,to: SCNVector3,yuandian: SCNVector3) -> CGFloat {
+    private func getAngle(from: SCNVector3,to: SCNVector3,yuandian: SCNVector3) -> CGFloat {
         let x1 = from.x - yuandian.x
         let z1 = from.z - yuandian.z
         let x2 = to.x - yuandian.x
@@ -300,10 +288,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     
-    
-    
-    
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -319,33 +303,3 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
 }
-
-
-
-//override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//    let touch = touches.first;
-//    let firstResult = sceneView.hitTest((touch?.location(in: sceneView))!, options: nil).first;
-//    if let node = firstResult?.node {
-//        if node == shipNode || node.parent == shipNode {
-//            // 将 shipNode 从sceneView.scene.rootNode坐标系下，转换到sceneView.pointOfView坐标系下
-//                           let matrixInPOV = sceneView.scene.rootNode.simdConvertTransform(shipNode.simdTransform, to: sceneView.pointOfView)
-//                           // 添加到相机结点下
-//                           sceneView.pointOfView?.addChildNode(shipNode)
-//                           shipNode.simdTransform = matrixInPOV
-//                           shipNode.opacity = 0.5;//半透明
-//        }
-//    }
-//
-//
-//}
-//
-//override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//    if shipNode.opacity < 1 {//这里偷懒，用透明度做个判断
-//        // 将 shipNode 从sceneView.pointOfView坐标系下，转换到sceneView.scene.rootNode坐标系下，传 nil  默认就是 scene.rootNode
-//        let matrixInRoot = sceneView.pointOfView!.simdConvertTransform(shipNode.simdTransform, to: nil)
-//        // 回到原来的结点下
-//        sceneView.scene.rootNode.addChildNode(shipNode)
-//        shipNode.simdTransform = matrixInRoot
-//        shipNode.opacity = 1;
-//    }
-//}
