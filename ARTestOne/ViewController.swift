@@ -9,10 +9,12 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController {
     
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet var sceneView: ARSCNView!
+    lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
+    
     var planeAnchor: ARPlaneAnchor?
     var planeNode: SCNNode?
     var nodeArray = [SCNNode]()
@@ -54,7 +56,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     @IBAction func addButton(_ sender: UIButton) {
         
         //获取模型场景
-        SCNNode
+        //SCNNode
         let cupNode = self.cupScene?.rootNode.childNodes.first
         cupNode?.position = SCNVector3(self.planeAnchor!.center.x, 0, self.planeAnchor!.center.z)
         //创建底座，添加到cup节点上面
@@ -99,21 +101,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         sceneView.session.pause()
     }
-    
+  
     //点击添加节点
     @objc func tapHandle(gesture: UITapGestureRecognizer)  {
         
-        //        let hitTest = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .estimatedHorizontalPlane)
-        //
-        //        guard results.count > 0 else{
-        //               return
-        //           }
-        //        for result in results {
-        //            if let node = result.node as? BottomNode {
-        //                print(node.name ?? "rr")
-        //            }
-        //            print(result.node.name!)
-        //        }
     }
     @objc func panHandle(gesture: UIPanGestureRecognizer)  {
         
@@ -121,28 +112,31 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         case .began:
             let arResults = self.sceneView.hitTest(gesture.location(in: sceneView), types: .existingPlane)
             //获取点的世界坐标
-            let currentSimd4 = arResults.last?.worldTransform
-            
-            let currentVector = SCNVector3(currentSimd4!.columns.3.x, currentSimd4!.columns.3.y, currentSimd4!.columns.3.z)
-            p1 = currentVector
-            
-            
-            let SCNHitResults:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
-            guard SCNHitResults.count > 0 else{
-                return
-            }
-            if let node = SCNHitResults.first?.node as? RotateNode {//命中旋转小节点,做旋转
+            if arResults.last != nil {
+                let currentSimd4 = arResults.last!.worldTransform
                 
-                if self.rotateNode == nil {//一次拖动只取第一次命中的节点
-                    self.rotateNode = node
-                }
-                
-                node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
-            } else {
-                if let node = SCNHitResults.first?.node {
-                    movedNode = getModelNode(node: node)
-                }
+                let currentVector = SCNVector3(currentSimd4.columns.3.x, currentSimd4.columns.3.y, currentSimd4.columns.3.z)
+                lastPoint = currentVector
             }
+          
+            
+//
+//            let SCNHitResults:[SCNHitTestResult] = (self.sceneView?.hitTest(gesture.location(in: self.sceneView), options: nil))!
+//            guard SCNHitResults.count > 0 else{
+//                return
+//            }
+//            if let node = SCNHitResults.first?.node as? RotateNode {//命中旋转小节点,做旋转
+//
+//                if self.rotateNode == nil {//一次拖动只取第一次命中的节点
+//                    self.rotateNode = node
+//                }
+//
+//                node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
+//            } else {
+//                if let node = SCNHitResults.first?.node {
+//                    movedNode = getModelNode(node: node)
+//                }
+//            }
             break
         case .changed:
             //旋转 ,首先选中旋转小节点
@@ -151,40 +145,43 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 //旋转
                 
                 let arResults = self.sceneView.hitTest(gesture.location(in: sceneView), types: .existingPlane)
-                //获取点的世界坐标
-                let currentSimd4 = arResults.last?.worldTransform
-                
-                let currentVector = SCNVector3(currentSimd4!.columns.3.x, currentSimd4!.columns.3.y, currentSimd4!.columns.3.z)
-                current = currentVector
-                if lastPoint != nil {
-                    let angel = getAngle(from: lastPoint!, to: current!, yuandian: planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
-                    print("angleg",angel)
-                    let parentNode = self.getModelNode(node: self.rotateNode!)
-                    //let transtion = gesture.translation(in: gesture.view)
-                    let clockwise = isClockwise(yuandian: planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
-                    print("clockwise",clockwise)
-                    if  !clockwise {
-                        self.newAngleY =  angel
-                        self.newAngleY += self.currentAngleY
-                        
-                        
-                        let rotationAcrion =  SCNAction.rotateBy(x: 0, y: angel, z: 0, duration: 0)
-                        parentNode!.runAction(rotationAcrion)
-                        
-                        
-                    } else {
-                        self.newAngleY =  -angel
-                        self.newAngleY += self.currentAngleY
-                        //                        let rotationAcrion =  SCNAction.rotateBy(x: 0, y: -angel, z: 0, duration: 0)
-                        //                        parentNode!.runAction(rotationAcrion)
+                if arResults.last != nil {
+                    //获取点的世界坐标
+                    let currentSimd4 = arResults.last!.worldTransform
+                    
+                    let currentVector = SCNVector3(currentSimd4.columns.3.x, currentSimd4.columns.3.y, currentSimd4.columns.3.z)
+                    current = currentVector
+                    if lastPoint != nil {
+                        let angel = getAngle(from: lastPoint!, to: current!, yuandian: planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
+                        print("angleg",angel)
+                        let parentNode = self.getModelNode(node: self.rotateNode!)
+                        //let transtion = gesture.translation(in: gesture.view)
+                        let clockwise = isClockwise(yuandian: planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
+                        print("clockwise",clockwise)
+                        if  !clockwise {
+                            self.newAngleY =  angel
+                            self.newAngleY += self.currentAngleY
+                            
+                            
+                            let rotationAcrion =  SCNAction.rotateBy(x: 0, y: angel, z: 0, duration: 0)
+                            parentNode!.runAction(rotationAcrion)
+                            
+                            
+                        } else {
+                            self.newAngleY =  -angel
+                            self.newAngleY += self.currentAngleY
+                            //                        let rotationAcrion =  SCNAction.rotateBy(x: 0, y: -angel, z: 0, duration: 0)
+                            //                        parentNode!.runAction(rotationAcrion)
+                        }
+                        parentNode?.eulerAngles.y = Float(self.newAngleY)
                     }
-                    parentNode?.eulerAngles.y = Float(self.newAngleY)
+                    
+                    lastPoint = current
+                    self.currentAngleY = self.newAngleY
+                    //旋转和移动只有一个生效
+                    return
                 }
-                
-                lastPoint = current
-                self.currentAngleY = self.newAngleY
-                //旋转和移动只有一个生效
-                return
+             
             }
             
             //            //旋转 ,首先选中旋转小节点
@@ -198,13 +195,16 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             //                    return
             //                }
             if self.movedNode != nil {//做移动动作
-                
+
                 let ARHitResults: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
-                
-                let lastResult = ARHitResults.last
-                let simd4 = lastResult!.worldTransform
+                guard let lastResult = ARHitResults.last else {
+                   return
+                }
+                let simd4 = lastResult.worldTransform
                 let vector = SCNVector3(simd4.columns.3.x, simd4.columns.3.y, simd4.columns.3.z)
                 movedNode?.worldPosition = vector;
+                self.planeNode = movedNode
+
             }
             
         case .ended:
@@ -243,6 +243,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return value > 0
     }
     private func getAngle(from: SCNVector3,to: SCNVector3,yuandian: SCNVector3) -> CGFloat {
+        print("hhh",from,to,yuandian)
         let x1 = from.x - yuandian.x
         let z1 = from.z - yuandian.z
         let x2 = to.x - yuandian.x
@@ -264,42 +265,12 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first;
-        let firstResult = sceneView.hitTest((touch?.location(in: sceneView))!, options: nil).first;
-        if let node = firstResult?.node as? RotateNode {
-            
-        }
+        
+        virtualObjectInteraction.touchesBegan(touches, with: event)
+        
     }
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("dddd")
     }
-    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        
-        guard let planeAnchor = anchor as? ARPlaneAnchor else {
-            return
-        }
-        self.planeNode = node
-        self.planeAnchor = planeAnchor
-        DispatchQueue.main.async {
-            self.addButton.isHidden = false
-        }
-        
-        
-    }
-    
-    
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
-        
-    }
-    
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
-        
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
-    }
+
 }
