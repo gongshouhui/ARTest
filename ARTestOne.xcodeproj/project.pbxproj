@@ -80,9 +80,9 @@
 			children = (
 				5966EFB92654B494008C45A6 /* AppDelegate.swift */,
 				5966EFBD2654B494008C45A6 /* ViewController.swift */,
+				59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */,
 				59105FDB26688452000C3BAC /* ModelNode.swift */,
 				59DB5813266A4CDB00A77C8C /* InterAction.swift */,
-				59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */,
 				5929DB6726563334001B934A /* BottomNode */,
 				5966EFBF2654B494008C45A6 /* Main.storyboard */,
 				5966EFC22654B495008C45A6 /* Assets.xcassets */,

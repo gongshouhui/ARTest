@@ -7,11 +7,11 @@
 
 import SceneKit
 class RotateNode: SCNNode {
-    static let radius: CGFloat = 0.03
+    static let size: CGFloat = 0.03
     
     init(name: String) {
         
-        let box = SCNBox(width: RotateNode.radius, height: 0, length: RotateNode.radius, chamferRadius: 0)
+        let box = SCNBox(width: RotateNode.size, height: 0, length: RotateNode.size, chamferRadius: 0)
         super.init()
         self.name = name
         let material = box.firstMaterial!

@@ -20,6 +20,8 @@ class ViewController: UIViewController {
     var rotateNode: RotateNode?
     var planeNode: SCNNode?
     var planeAnchor: ARPlaneAnchor?
+    var nodeArray = [SCNNode]()
+    
     
     
     lazy var arSessionConfiguration: ARWorldTrackingConfiguration = {
@@ -39,10 +41,15 @@ class ViewController: UIViewController {
     
     
     @IBAction func addButton(_ sender: UIButton) {
+   
         
         //获取模型场景
         //SCNNode
         let cupNode = self.cupScene?.rootNode.childNodes.first
+        self.nodeArray.append(cupNode!)
+        print("cupnode",cupNode?.width(),cupNode?.length(),cupNode?.name)
+        
+        
         cupNode?.position = SCNVector3(self.planeAnchor!.center.x, 0, self.planeAnchor!.center.z)
         self.bottomNode.scale = SCNVector3(3, 1, 3)
         self.bottomNode.position = SCNVector3(0, -0.03,0)
@@ -51,7 +58,6 @@ class ViewController: UIViewController {
         modelNode.addChildNode(cupNode!)
         modelNode.addChildNode(self.bottomNode)
         self.planeNode!.addChildNode(modelNode)
-        
         
     }
     
@@ -84,6 +90,7 @@ class ViewController: UIViewController {
         // Run the view's session
         sceneView.session.run(self.arSessionConfiguration)
         self.virtualObjectInteraction.current = nil
+        
     }
     
     
@@ -94,4 +101,14 @@ class ViewController: UIViewController {
     }
    
 
+}
+
+extension SCNNode {
+    func width() -> Float {
+        return boundingBox.max.x - boundingBox.min.x
+    }
+    func length() -> Float {
+        return boundingBox.max.z - boundingBox.min.z
+    }
+    
 }
