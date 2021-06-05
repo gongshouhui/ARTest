@@ -39,34 +39,42 @@ enum Direction {
 }
 class BottomNode: SCNNode {
     static let primaryColor = UIColor.gray
+    //长方形长边
     var bottomWidth: CGFloat
+    //长方形短边
     var bottomLength: CGFloat
+    //指线段较短边的长度，一般为固定
+    var segmentWidth: CGFloat
+    
     
     //一般情况下短边为固定大小。length值线段短边长度
-    init(x width: CGFloat,z length: CGFloat) {
-        self.bottomWidth = width
-        self.bottomLength = length
+    init(xwidth: CGFloat,zlength: CGFloat,segmentWidth: CGFloat) {
+        self.bottomWidth = xwidth
+        self.bottomLength = zlength
+        self.segmentWidth = segmentWidth
         super.init()
         let rotate1 = RotateNode(name: "leftTop")
         let rotate2 = RotateNode(name: "leftBottom")
         let rotate3 = RotateNode(name: "rightTop")
         let rotate4 = RotateNode(name: "rightBottom")
         
-        let segment1 = SegmentNode(name: "left", alignment: .vertical,width: self.bottomWidth,length: self.bottomLength)
-        let segment2 = SegmentNode(name: "top", alignment: .horizontal,width: self.bottomWidth,length: self.bottomLength)
-        let segment3 = SegmentNode(name: "right", alignment: .vertical,width: self.bottomWidth,length: self.bottomLength)
-        let segment4 = SegmentNode(name: "bottom", alignment: .horizontal,width: self.bottomWidth,length: self.bottomLength)
+        let segment1 = SegmentNode(name: "left", alignment: .vertical,width: self.bottomLength,length: self.segmentWidth)
+        let segment2 = SegmentNode(name: "top", alignment: .horizontal,width: self.bottomWidth,length: self.segmentWidth)
+        let segment3 = SegmentNode(name: "right", alignment: .vertical,width: self.bottomLength,length: self.segmentWidth)
+        let segment4 = SegmentNode(name: "bottom", alignment: .horizontal,width: self.bottomWidth,length: self.segmentWidth)
         let nodes = [rotate1,rotate2,rotate3,rotate4,segment1,segment2,segment3,segment4]
         let lengther: CGFloat = self.bottomWidth
+        let short = self.bottomLength
+        
         //position是相对于父节点的位置，默认（0，0，0）
-        rotate1.position = SCNVector3(-lengther/2, 0, -lengther/2)
-        rotate2.position = SCNVector3(-lengther/2, 0, lengther/2)
-        rotate3.position = SCNVector3(lengther/2, 0, -lengther/2)
-        rotate4.position = SCNVector3(lengther/2, 0, lengther/2)
+        rotate1.position = SCNVector3(-lengther/2, 0, -short/2)
+        rotate2.position = SCNVector3(-lengther/2, 0, short/2)
+        rotate3.position = SCNVector3(lengther/2, 0, -short/2)
+        rotate4.position = SCNVector3(lengther/2, 0, short/2)
         segment1.position = SCNVector3(-lengther/2, 0, 0)
-        segment2.position = SCNVector3(0, 0, -lengther/2)
+        segment2.position = SCNVector3(0, 0, -short/2)
         segment3.position = SCNVector3(lengther/2, 0, 0)
-        segment4.position = SCNVector3(0, 0, lengther/2)
+        segment4.position = SCNVector3(0, 0, short/2)
         
     
         
@@ -80,6 +88,7 @@ class BottomNode: SCNNode {
     override init() {
         self.bottomWidth = 0.1
         self.bottomLength = 0.1
+        self.segmentWidth = 0.1
         super.init()
         let rotate1 = RotateNode(name: "leftTop")
         let rotate2 = RotateNode(name: "leftBottom")

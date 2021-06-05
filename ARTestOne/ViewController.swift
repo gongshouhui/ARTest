@@ -51,9 +51,8 @@ class ViewController: UIViewController {
         modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
         self.planeNode!.addChildNode(modelNode)
         //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
-        let plateWoidth: CGFloat = 0.155
-        
-        let bottomNode = BottomNode(x: (CGFloat(self.nodeArray.count) * plateWoidth), z: 0.02)
+        let plateWidth: CGFloat = 0.155
+        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * plateWidth), zlength: plateWidth, segmentWidth: 0.02)
        // bottomNode.scale = SCNVector3(3, 1, 3)
         bottomNode.position = SCNVector3(0, -0.03,0)
         
@@ -62,9 +61,9 @@ class ViewController: UIViewController {
         for (index,node) in self.nodeArray.enumerated() {
             print(index,node)
             if self.nodeArray.count % 2 == 1 {
-                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * plateWoidth, 0, 0)
+                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * plateWidth, 0, 0)
             } else {
-                node.position = SCNVector3(plateWoidth/2 + CGFloat(index - self.nodeArray.count/2) * plateWoidth, 0, 0)
+                node.position = SCNVector3(plateWidth/2 + CGFloat(index - self.nodeArray.count/2) * plateWidth, 0, 0)
             }
             
             

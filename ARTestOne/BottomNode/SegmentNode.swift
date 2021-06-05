@@ -7,9 +7,12 @@
 
 import SceneKit
 class SegmentNode: SCNNode {
+    //较长边
     var segmentWidth: CGFloat
-    //短边固定大小
+    //较短边
     var segmentLength: CGFloat
+   
+    
     
     
     //默认值
