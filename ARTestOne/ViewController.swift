@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
     
     //取hitTest命中的节点
+    var modelNode: ModelNode?
+    
     var movedNode: SCNNode?
     var rotateNode: RotateNode?
     var planeNode: SCNNode?
@@ -30,34 +32,44 @@ class ViewController: UIViewController {
         configuration.isLightEstimationEnabled = true
         return configuration
     }()
-    lazy var cupScene: SCNScene? = {
-        let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
-        return cupScene
-    }()
-    lazy var bottomNode: BottomNode = {
-        let bottomNode = BottomNode()
-        return bottomNode
-    }()
-    
+   
     
     @IBAction func addButton(_ sender: UIButton) {
-   
+        self.modelNode?.removeFromParentNode()
         
         //获取模型场景
         //SCNNode
-        let cupNode = self.cupScene?.rootNode.childNodes.first
+        let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
+        //场景中第一个节点
+        let cupNode = cupScene?.rootNode.childNodes.first
         self.nodeArray.append(cupNode!)
-        print("cupnode",cupNode?.width(),cupNode?.length(),cupNode?.name)
         
         
-        cupNode?.position = SCNVector3(self.planeAnchor!.center.x, 0, self.planeAnchor!.center.z)
-        self.bottomNode.scale = SCNVector3(3, 1, 3)
-        self.bottomNode.position = SCNVector3(0, -0.03,0)
         let modelNode = ModelNode()
-        modelNode.position = SCNVector3(0,0,0)
-        modelNode.addChildNode(cupNode!)
-        modelNode.addChildNode(self.bottomNode)
+        self.modelNode = modelNode
+        //设置父节点的位置为捕捉锚点的位置中心
+        modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
         self.planeNode!.addChildNode(modelNode)
+        //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
+        let plateWoidth: CGFloat = 0.155
+        
+        let bottomNode = BottomNode(x: (CGFloat(self.nodeArray.count) * plateWoidth), z: 0.02)
+       // bottomNode.scale = SCNVector3(3, 1, 3)
+        bottomNode.position = SCNVector3(0, -0.03,0)
+        
+        modelNode.addChildNode(bottomNode)
+        
+        for (index,node) in self.nodeArray.enumerated() {
+            print(index,node)
+            if self.nodeArray.count % 2 == 1 {
+                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * plateWoidth, 0, 0)
+            } else {
+                node.position = SCNVector3(plateWoidth/2 + CGFloat(index - self.nodeArray.count/2) * plateWoidth, 0, 0)
+            }
+            
+            
+            modelNode.addChildNode(node)
+        }
         
     }
     
@@ -79,9 +91,6 @@ class ViewController: UIViewController {
         
         sceneView.session.pause()
     }
-  
- 
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         

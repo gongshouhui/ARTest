@@ -7,8 +7,9 @@
 
 import SceneKit
 class SegmentNode: SCNNode {
-    var width: CGFloat
-    var length: CGFloat
+    var segmentWidth: CGFloat
+    //短边固定大小
+    var segmentLength: CGFloat
     
     
     //默认值
@@ -19,15 +20,15 @@ class SegmentNode: SCNNode {
     let plane: SCNBox
     
     init(name: String, alignment: Alignment,width: CGFloat,length: CGFloat) {
-        self.width = width
-        self.length = length
+        self.segmentWidth = width
+        self.segmentLength = length
         self.alignment = alignment
         switch alignment {
         case .vertical:
             
-            plane = SCNBox(width: self.length, height: 0, length: self.width - RotateNode.size, chamferRadius: 0)
+            plane = SCNBox(width: self.segmentLength, height: 0, length: self.segmentWidth - RotateNode.size, chamferRadius: 0)
         case .horizontal:
-            plane = SCNBox(width: self.width - RotateNode.size, height: 0, length: self.length, chamferRadius: 0)
+            plane = SCNBox(width: self.segmentWidth - RotateNode.size, height: 0, length: self.segmentLength, chamferRadius: 0)
         }
         super.init()
         self.name = name
@@ -39,8 +40,8 @@ class SegmentNode: SCNNode {
     }
     
     init(name: String, alignment: Alignment) {
-        self.width = SegmentNode.thickness
-        self.length = SegmentNode.length
+        self.segmentWidth = SegmentNode.thickness
+        self.segmentLength = SegmentNode.length
         self.alignment = alignment
         switch alignment {
         case .vertical:
