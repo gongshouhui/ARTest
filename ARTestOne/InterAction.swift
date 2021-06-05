@@ -76,12 +76,12 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                     let currentVector = SCNVector3(currentSimd4.columns.3.x, currentSimd4.columns.3.y, currentSimd4.columns.3.z)
                     current = currentVector
                     if lastPoint != nil {
-                        let angel = getAngle(from: lastPoint!, to: current!, yuandian: self.viewController.planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
-                        print("angleg",angel)
+                        let angel = getAngle(from: lastPoint!, to: current!, yuandian: self.viewController.rotateCenter?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
+                       
                         let parentNode = self.getModelNode(node: self.viewController.rotateNode!)
                         //let transtion = gesture.translation(in: gesture.view)
-                        let clockwise = isClockwise(yuandian: self.viewController.planeNode?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
-                        print("clockwise",clockwise)
+                        let clockwise = isClockwise(yuandian: self.viewController.rotateCenter?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
+                     
                         if  !clockwise {
                             self.newAngleY =  angel
                             self.newAngleY += self.currentAngleY
@@ -124,11 +124,11 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                 guard let lastResult = ARHitResults.last else {
                    return
                 }
+                print("plane",self.viewController.planeNode?.worldPosition)
                 let simd4 = lastResult.worldTransform
                 let vector = SCNVector3(simd4.columns.3.x, simd4.columns.3.y, simd4.columns.3.z)
                 self.viewController.movedNode?.worldPosition = vector;
-                self.viewController.planeNode = self.viewController.movedNode
-
+                self.viewController.rotateCenter = self.viewController.movedNode
             }
             
         case .ended:
@@ -194,7 +194,6 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
         return value > 0
     }
     private func getAngle(from: SCNVector3,to: SCNVector3,yuandian: SCNVector3) -> CGFloat {
-        print("hhh",from,to,yuandian)
         let x1 = from.x - yuandian.x
         let z1 = from.z - yuandian.z
         let x2 = to.x - yuandian.x
@@ -202,7 +201,6 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
         let x = x1 * x2 + z1 * z2
         let z = x1 * z2 - x2 * z1
         let angel = acos(x/sqrt(x * x + z * z))
-        print("jisuan",x1,z1,x2,z2,x,z,angel)
         return CGFloat(angel)
     }
 }

@@ -18,7 +18,11 @@ class ViewController: UIViewController {
     //取hitTest命中的节点
     var modelNode: ModelNode?
     
-    var movedNode: SCNNode?
+    //记录当前是否需要移动
+    var movedNode: ModelNode?
+    //旋转时获取中心的的节点,计算角度用
+    var rotateCenter: ModelNode?
+    
     var rotateNode: RotateNode?
     var planeNode: SCNNode?
     var planeAnchor: ARPlaneAnchor?
@@ -50,6 +54,7 @@ class ViewController: UIViewController {
         //设置父节点的位置为捕捉锚点的位置中心
         modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
         self.planeNode!.addChildNode(modelNode)
+        self.rotateCenter = self.modelNode
         //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
         let plateWidth: CGFloat = 0.155
         let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * plateWidth), zlength: plateWidth, segmentWidth: 0.02)
@@ -59,7 +64,6 @@ class ViewController: UIViewController {
         modelNode.addChildNode(bottomNode)
         
         for (index,node) in self.nodeArray.enumerated() {
-            print(index,node)
             if self.nodeArray.count % 2 == 1 {
                 node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * plateWidth, 0, 0)
             } else {

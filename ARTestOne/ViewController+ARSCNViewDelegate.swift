@@ -14,12 +14,15 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
        
     }
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        print(node)
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-        self.planeNode = node
-        self.planeAnchor = planeAnchor
+        //平面节点识别出来后，这个节点的锚点不会变化，会识别多个平面
+        if self.planeNode == nil {
+            self.planeNode = node
+            self.planeAnchor = planeAnchor
+        }
+      
         DispatchQueue.main.async {
             self.addButton.isHidden = false
         }
