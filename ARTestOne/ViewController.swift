@@ -54,10 +54,11 @@ class ViewController: UIViewController {
         //设置父节点的位置为捕捉锚点的位置中心
         modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
         self.planeNode!.addChildNode(modelNode)
+        self.virtualObjectInteraction.currentAngleY = 0.0
         self.rotateCenter = self.modelNode
         //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
         let plateWidth: CGFloat = 0.155
-        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * plateWidth), zlength: plateWidth, segmentWidth: 0.02)
+        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * plateWidth), zlength: plateWidth, segmentWidth: RotateNode.size)
        // bottomNode.scale = SCNVector3(3, 1, 3)
         bottomNode.position = SCNVector3(0, -0.03,0)
         

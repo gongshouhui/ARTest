@@ -16,8 +16,8 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
     
      var current: SCNVector3?
      var lastPoint: SCNVector3?
-     private var newAngleY: CGFloat = 0.0
-     private var currentAngleY: CGFloat = 0.0
+    var newAngleY: CGFloat = 0.0
+    var currentAngleY: CGFloat = 0.0
     
     /// The tracked screen position used to update the `trackedObject`'s position.
     private var currentTrackingPosition: CGPoint?
