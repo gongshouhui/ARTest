@@ -45,8 +45,10 @@ class ViewController: UIViewController {
         //SCNNode
         let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
         //场景中第一个节点
-        let cupNode = cupScene?.rootNode.childNodes.first
-        self.nodeArray.append(cupNode!)
+        guard let cupNode = cupScene?.rootNode.childNodes.first else {
+            return
+        }
+        self.nodeArray.append(cupNode)
         
         
         let modelNode = ModelNode()
@@ -57,8 +59,9 @@ class ViewController: UIViewController {
         self.virtualObjectInteraction.currentAngleY = 0.0
         self.rotateCenter = self.modelNode
         //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
-        let plateWidth: CGFloat = 0.155
-        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * plateWidth), zlength: plateWidth, segmentWidth: RotateNode.size)
+        let plateWidth = cupNode.childNode(withName: "plate", recursively: false)?.width()
+        let bottomNodeWidth = plateWidth ?? 0.155
+        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * bottomNodeWidth), zlength: bottomNodeWidth, segmentWidth: RotateNode.size)
        // bottomNode.scale = SCNVector3(3, 1, 3)
         bottomNode.position = SCNVector3(0, -0.03,0)
         
@@ -66,9 +69,9 @@ class ViewController: UIViewController {
         
         for (index,node) in self.nodeArray.enumerated() {
             if self.nodeArray.count % 2 == 1 {
-                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * plateWidth, 0, 0)
+                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
             } else {
-                node.position = SCNVector3(plateWidth/2 + CGFloat(index - self.nodeArray.count/2) * plateWidth, 0, 0)
+                node.position = SCNVector3(bottomNodeWidth/2 + CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
             }
             
             
@@ -117,11 +120,11 @@ class ViewController: UIViewController {
 }
 
 extension SCNNode {
-    func width() -> Float {
-        return boundingBox.max.x - boundingBox.min.x
+    func width() -> CGFloat {
+        return CGFloat(boundingBox.max.x - boundingBox.min.x)
     }
-    func length() -> Float {
-        return boundingBox.max.z - boundingBox.min.z
+    func length() -> CGFloat {
+        return CGFloat(boundingBox.max.z - boundingBox.min.z)
     }
     
 }
