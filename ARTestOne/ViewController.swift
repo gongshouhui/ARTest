@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet var sceneView: ARSCNView!
+    var focusSquare = FocusSquare()
     lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
     
     //取hitTest命中的节点
@@ -37,7 +38,38 @@ class ViewController: UIViewController {
         return configuration
     }()
    
-    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        sceneView.delegate = self
+        sceneView.showsStatistics = true
+        //sceneView.allowsCameraControl = true
+        //sceneView.debugOptions = [.showFeaturePoints]
+       
+        addButton.isHidden = true
+        //        let bottomNode = BottomNode()
+        //        //y方向scale设置为零后，hitTest捕捉不到节点
+        //        //bottomNode.scale = SCNVector3(1.5, 0, 1.5)
+        //        bottomNode.position = SCNVector3(0, -0.2, -0.3)
+        //        sceneView.scene.rootNode.addChildNode(bottomNode)
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // Create a session configuratio
+        
+        // Run the view's session
+        sceneView.session.run(self.arSessionConfiguration)
+        sceneView.scene.rootNode.addChildNode(focusSquare)
+        self.virtualObjectInteraction.current = nil
+        
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        sceneView.session.pause()
+    }
+   
     @IBAction func addButton(_ sender: UIButton) {
         self.modelNode?.removeFromParentNode()
         
@@ -102,44 +134,35 @@ class ViewController: UIViewController {
             
         }
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        sceneView.delegate = self
-        sceneView.showsStatistics = true
-        //sceneView.allowsCameraControl = true
-        addButton.isHidden = true
-        //        let bottomNode = BottomNode()
-        //        //y方向scale设置为零后，hitTest捕捉不到节点
-        //        //bottomNode.scale = SCNVector3(1.5, 0, 1.5)
-        //        bottomNode.position = SCNVector3(0, -0.2, -0.3)
-        //        sceneView.scene.rootNode.addChildNode(bottomNode)
-        
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Create a session configuratio
-        
-        // Run the view's session
-        sceneView.session.run(self.arSessionConfiguration)
-        self.virtualObjectInteraction.current = nil
-        
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        sceneView.session.pause()
-    }
    
-    
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         self.virtualObjectInteraction.touchesBegan(touches, with: event)
         
     }
    
-
+    func updateFocusSquare(isObjectVisible: Bool) {
+        if isObjectVisible {
+            focusSquare.hide()
+            return
+        } else {
+            focusSquare.unhide()
+        }
+        
+        // 当ARKit出于良好检测状态时进行射线检测
+        if let camera = sceneView.session.currentFrame?.camera, case .normal = camera.trackingState,
+            let query = sceneView.getRaycastQuery(),
+            let result = sceneView.castRay(for: query).first {
+                self.sceneView.scene.rootNode.addChildNode(self.focusSquare)
+                self.focusSquare.state = .detecting(raycastResult: result, camera: camera)
+        } else {
+         
+                self.focusSquare.state = .initializing
+                self.sceneView.pointOfView?.addChildNode(self.focusSquare)
+        }
+    }
+    
+    
 }
 
 extension SCNNode {
@@ -150,4 +173,24 @@ extension SCNNode {
         return CGFloat(boundingBox.max.z - boundingBox.min.z)
     }
     
+}
+extension ARSCNView {
+   
+   func unprojectPoint(_ point: SIMD3<Float>) -> SIMD3<Float> {
+       return SIMD3<Float>(unprojectPoint(SCNVector3(point)))
+   }
+   
+   // - Tag: 发出射线
+   func castRay(for query: ARRaycastQuery) -> [ARRaycastResult] {
+       return session.raycast(query)
+   }
+
+   // - Tag: 得到射线返回信息
+   func getRaycastQuery(for alignment: ARRaycastQuery.TargetAlignment = .any) -> ARRaycastQuery? {
+       return raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: alignment)
+   }
+   
+   var screenCenter: CGPoint {
+       return CGPoint(x: bounds.midX, y: bounds.midY)
+   }
 }

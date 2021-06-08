@@ -11,7 +11,9 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
 //        return SCNNode()
 //    }
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-       
+        DispatchQueue.main.async {
+            self.updateFocusSquare(isObjectVisible: self.nodeArray.count > 0 ? true : false)
+        }
     }
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {

@@ -17,6 +17,9 @@
 		5966EFC12654B494008C45A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5966EFBF2654B494008C45A6 /* Main.storyboard */; };
 		5966EFC32654B495008C45A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5966EFC22654B495008C45A6 /* Assets.xcassets */; };
 		5966EFC62654B495008C45A6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5966EFC42654B495008C45A6 /* LaunchScreen.storyboard */; };
+		59793600266F4CE6003722EF /* FocusSquareSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597935FE266F4CE6003722EF /* FocusSquareSegment.swift */; };
+		59793601266F4CE6003722EF /* FocusSquare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597935FF266F4CE6003722EF /* FocusSquare.swift */; };
+		59793607266F4D34003722EF /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59793606266F4D34003722EF /* Utilities.swift */; };
 		59DB5814266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */; };
 		59DB5815266A4CDB00A77C8C /* InterAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB5813266A4CDB00A77C8C /* InterAction.swift */; };
 /* End PBXBuildFile section */
@@ -34,6 +37,9 @@
 		5966EFC22654B495008C45A6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5966EFC52654B495008C45A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5966EFC72654B495008C45A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		597935FE266F4CE6003722EF /* FocusSquareSegment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusSquareSegment.swift; sourceTree = "<group>"; };
+		597935FF266F4CE6003722EF /* FocusSquare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusSquare.swift; sourceTree = "<group>"; };
+		59793606266F4D34003722EF /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
 		59DB5813266A4CDB00A77C8C /* InterAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -83,6 +89,8 @@
 				59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */,
 				59105FDB26688452000C3BAC /* ModelNode.swift */,
 				59DB5813266A4CDB00A77C8C /* InterAction.swift */,
+				59793605266F4D34003722EF /* Utilities */,
+				597935FD266F4CE6003722EF /* Focus Square */,
 				5929DB6726563334001B934A /* BottomNode */,
 				5966EFBF2654B494008C45A6 /* Main.storyboard */,
 				5966EFC22654B495008C45A6 /* Assets.xcassets */,
@@ -91,6 +99,24 @@
 				5966EFC72654B495008C45A6 /* Info.plist */,
 			);
 			path = ARTestOne;
+			sourceTree = "<group>";
+		};
+		597935FD266F4CE6003722EF /* Focus Square */ = {
+			isa = PBXGroup;
+			children = (
+				597935FE266F4CE6003722EF /* FocusSquareSegment.swift */,
+				597935FF266F4CE6003722EF /* FocusSquare.swift */,
+			);
+			name = "Focus Square";
+			path = "../../ar/最新参考/ar资料包/资料包2/demo2/ARKitInteraction/Focus Square";
+			sourceTree = "<group>";
+		};
+		59793605266F4D34003722EF /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				59793606266F4D34003722EF /* Utilities.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,10 +194,13 @@
 				59DB5814266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift in Sources */,
 				5929DB69265633A2001B934A /* RotateNode.swift in Sources */,
 				5929DB6B265633CE001B934A /* SegmentNode.swift in Sources */,
+				59793600266F4CE6003722EF /* FocusSquareSegment.swift in Sources */,
+				59793607266F4D34003722EF /* Utilities.swift in Sources */,
 				59DB5815266A4CDB00A77C8C /* InterAction.swift in Sources */,
 				5966EFBE2654B494008C45A6 /* ViewController.swift in Sources */,
 				5966EFBA2654B494008C45A6 /* AppDelegate.swift in Sources */,
 				59105FDC26688452000C3BAC /* ModelNode.swift in Sources */,
+				59793601266F4CE6003722EF /* FocusSquare.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +350,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D8U28MDC2M;
 				INFOPLIST_FILE = ARTestOne/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -341,7 +370,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LK6EK944B9;
 				INFOPLIST_FILE = ARTestOne/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
