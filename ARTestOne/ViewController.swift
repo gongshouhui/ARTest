@@ -80,6 +80,28 @@ class ViewController: UIViewController {
         
     }
     
+    @IBAction func resetAction(_ sender: Any) {
+        //所有参数置空
+        self.planeNode?.removeFromParentNode()
+        self.planeNode = nil
+        self.planeAnchor = nil
+        self.nodeArray.removeAll()
+        self.modelNode = nil
+        self.movedNode = nil
+        self.rotateCenter = nil
+        self.rotateNode = nil
+        self.addButton.isHidden = true
+        sceneView.session.run(self.arSessionConfiguration, options: [.resetTracking, .removeExistingAnchors])
+    }
+    @IBAction func reduce(_ sender: Any) {
+        if self.nodeArray.count > 0 {
+            self.nodeArray.removeLast()
+            //重新排列
+            self.modelNode?.removeFromParentNode()
+            
+            
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         sceneView.delegate = self
@@ -93,11 +115,6 @@ class ViewController: UIViewController {
         //        sceneView.scene.rootNode.addChildNode(bottomNode)
         
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        sceneView.session.pause()
-    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -108,6 +125,12 @@ class ViewController: UIViewController {
         self.virtualObjectInteraction.current = nil
         
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        sceneView.session.pause()
+    }
+   
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

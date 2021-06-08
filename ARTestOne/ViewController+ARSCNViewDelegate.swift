@@ -21,11 +21,15 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
         if self.planeNode == nil {
             self.planeNode = node
             self.planeAnchor = planeAnchor
+            DispatchQueue.main.async {
+                //检测平面锚点，直接添加模型
+                self.addButton(UIButton())
+                self.addButton.isHidden = false
+            }
+           
         }
       
-        DispatchQueue.main.async {
-            self.addButton.isHidden = false
-        }
+        
         
         
     }
