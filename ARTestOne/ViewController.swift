@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet var sceneView: ARSCNView!
     var focusSquare = FocusSquare()
+    let coachingOverlay = ARCoachingOverlayView()
     lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
     
     //取hitTest命中的节点
@@ -122,6 +123,7 @@ class ViewController: UIViewController {
         self.movedNode = nil
         self.rotateCenter = nil
         self.rotateNode = nil
+        self.virtualObjectInteraction.currentAngleY = 0.0
         self.addButton.isHidden = true
         sceneView.session.run(self.arSessionConfiguration, options: [.resetTracking, .removeExistingAnchors])
     }
@@ -142,7 +144,7 @@ class ViewController: UIViewController {
     }
    
     func updateFocusSquare(isObjectVisible: Bool) {
-        if isObjectVisible {
+        if isObjectVisible || coachingOverlay.isActive {
             focusSquare.hide()
             return
         } else {

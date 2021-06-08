@@ -20,41 +20,38 @@
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BrB-h1-WRS">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
                             </arscnView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZpZ-YA-jC8">
-                                <rect key="frame" x="50" y="94" width="92" height="30"/>
-                                <state key="normal" title="添加一个模型"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZpZ-YA-jC8">
+                                <rect key="frame" x="183" y="771" width="48" height="48"/>
+                                <state key="normal" image="add"/>
+                                <state key="highlighted" image="addPressed"/>
                                 <connections>
                                     <action selector="addButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="8pg-7O-ayQ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8QO-42-uYa">
-                                <rect key="frame" x="330" y="94" width="31" height="30"/>
-                                <state key="normal" title="恢复"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8QO-42-uYa">
+                                <rect key="frame" x="338" y="771" width="48" height="48"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="48" id="VY8-27-hQx"/>
+                                    <constraint firstAttribute="height" constant="48" id="beP-08-PKj"/>
+                                </constraints>
+                                <state key="normal" image="restart"/>
+                                <state key="highlighted" image="restartPressed"/>
                                 <connections>
                                     <action selector="resetAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Uqu-kM-ZnR"/>
-                                </connections>
-                            </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pVa-M5-XHY">
-                                <rect key="frame" x="50" y="169" width="92" height="30"/>
-                                <state key="normal" title="减少一个模型"/>
-                                <connections>
-                                    <action selector="reduce:" destination="BV1-FR-VrT" eventType="touchUpInside" id="rov-rI-8Kb"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="8QO-42-uYa" secondAttribute="trailing" constant="53" id="3Kt-K0-hTO"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
-                            <constraint firstItem="ZpZ-YA-jC8" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" constant="50" id="PET-7S-E3J"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
-                            <constraint firstItem="ZpZ-YA-jC8" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" constant="50" id="cV8-Rm-Zm5"/>
-                            <constraint firstItem="pVa-M5-XHY" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" constant="50" id="ji1-EZ-mid"/>
-                            <constraint firstItem="pVa-M5-XHY" firstAttribute="top" secondItem="ZpZ-YA-jC8" secondAttribute="bottom" constant="45" id="ly3-pe-bli"/>
-                            <constraint firstItem="8QO-42-uYa" firstAttribute="top" secondItem="fQZ-KI-GVf" secondAttribute="top" constant="50" id="qHZ-3f-4ub"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="ZpZ-YA-jC8" secondAttribute="bottom" constant="43" id="hoZ-kW-dTw"/>
+                            <constraint firstItem="ZpZ-YA-jC8" firstAttribute="centerX" secondItem="U0K-SW-4ec" secondAttribute="centerX" id="jDF-XE-FVW"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="8QO-42-uYa" secondAttribute="trailing" constant="28" id="pIV-As-mtI"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="8QO-42-uYa" secondAttribute="bottom" constant="43" id="rcS-LB-JbQ"/>
                         </constraints>
                     </view>
                     <connections>
@@ -68,6 +65,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="add" width="48" height="48"/>
+        <image name="addPressed" width="48" height="48"/>
+        <image name="restart" width="20" height="20"/>
+        <image name="restartPressed" width="20" height="20"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -173,9 +173,15 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
     
     }
     
-    
-    
-  
+    func updatedTrackingPosition(for object: ModelNode, from gesture: UIPanGestureRecognizer) -> CGPoint {
+        let translation = gesture.translation(in: sceneView)
+        
+        let currentPosition = currentTrackingPosition ?? CGPoint(sceneView.projectPoint(object.position))
+        let updatedPosition = CGPoint(x: currentPosition.x + translation.x, y: currentPosition.y + translation.y)
+        currentTrackingPosition = updatedPosition
+        return updatedPosition
+    }
+   
     //如果有父节点返回父节点,没有返回自己
     private func getModelNode(node: SCNNode) -> ModelNode? {
         if let modelNode = node as? ModelNode {
@@ -204,3 +210,6 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
         return CGFloat(angel)
     }
 }
+
+
+

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		59105FDC26688452000C3BAC /* ModelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59105FDB26688452000C3BAC /* ModelNode.swift */; };
 		5929DB69265633A2001B934A /* RotateNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5929DB68265633A2001B934A /* RotateNode.swift */; };
 		5929DB6B265633CE001B934A /* SegmentNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5929DB6A265633CE001B934A /* SegmentNode.swift */; };
 		5929DB6F26563406001B934A /* BottomNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5929DB6E26563406001B934A /* BottomNode.swift */; };
@@ -20,12 +19,13 @@
 		59793600266F4CE6003722EF /* FocusSquareSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597935FE266F4CE6003722EF /* FocusSquareSegment.swift */; };
 		59793601266F4CE6003722EF /* FocusSquare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597935FF266F4CE6003722EF /* FocusSquare.swift */; };
 		59793607266F4D34003722EF /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59793606266F4D34003722EF /* Utilities.swift */; };
+		5979360B266F6366003722EF /* ViewController+CoachingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5979360A266F6366003722EF /* ViewController+CoachingOverlay.swift */; };
+		5979360D266F943E003722EF /* ModelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5979360C266F943E003722EF /* ModelNode.swift */; };
 		59DB5814266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */; };
 		59DB5815266A4CDB00A77C8C /* InterAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB5813266A4CDB00A77C8C /* InterAction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		59105FDB26688452000C3BAC /* ModelNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelNode.swift; sourceTree = "<group>"; };
 		5929DB68265633A2001B934A /* RotateNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotateNode.swift; sourceTree = "<group>"; };
 		5929DB6A265633CE001B934A /* SegmentNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentNode.swift; sourceTree = "<group>"; };
 		5929DB6E26563406001B934A /* BottomNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomNode.swift; sourceTree = "<group>"; };
@@ -40,6 +40,8 @@
 		597935FE266F4CE6003722EF /* FocusSquareSegment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusSquareSegment.swift; sourceTree = "<group>"; };
 		597935FF266F4CE6003722EF /* FocusSquare.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusSquare.swift; sourceTree = "<group>"; };
 		59793606266F4D34003722EF /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		5979360A266F6366003722EF /* ViewController+CoachingOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+CoachingOverlay.swift"; sourceTree = "<group>"; };
+		5979360C266F943E003722EF /* ModelNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelNode.swift; sourceTree = "<group>"; };
 		59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
 		59DB5813266A4CDB00A77C8C /* InterAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,11 +89,12 @@
 				5966EFB92654B494008C45A6 /* AppDelegate.swift */,
 				5966EFBD2654B494008C45A6 /* ViewController.swift */,
 				59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */,
-				59105FDB26688452000C3BAC /* ModelNode.swift */,
+				5979360C266F943E003722EF /* ModelNode.swift */,
 				59DB5813266A4CDB00A77C8C /* InterAction.swift */,
+				5979360A266F6366003722EF /* ViewController+CoachingOverlay.swift */,
+				5929DB6726563334001B934A /* BottomNode */,
 				59793605266F4D34003722EF /* Utilities */,
 				597935FD266F4CE6003722EF /* Focus Square */,
-				5929DB6726563334001B934A /* BottomNode */,
 				5966EFBF2654B494008C45A6 /* Main.storyboard */,
 				5966EFC22654B495008C45A6 /* Assets.xcassets */,
 				5966EFBB2654B494008C45A6 /* art.scnassets */,
@@ -193,13 +196,14 @@
 				5929DB6F26563406001B934A /* BottomNode.swift in Sources */,
 				59DB5814266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift in Sources */,
 				5929DB69265633A2001B934A /* RotateNode.swift in Sources */,
+				5979360B266F6366003722EF /* ViewController+CoachingOverlay.swift in Sources */,
 				5929DB6B265633CE001B934A /* SegmentNode.swift in Sources */,
+				5979360D266F943E003722EF /* ModelNode.swift in Sources */,
 				59793600266F4CE6003722EF /* FocusSquareSegment.swift in Sources */,
 				59793607266F4D34003722EF /* Utilities.swift in Sources */,
 				59DB5815266A4CDB00A77C8C /* InterAction.swift in Sources */,
 				5966EFBE2654B494008C45A6 /* ViewController.swift in Sources */,
 				5966EFBA2654B494008C45A6 /* AppDelegate.swift in Sources */,
-				59105FDC26688452000C3BAC /* ModelNode.swift in Sources */,
 				59793601266F4CE6003722EF /* FocusSquare.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
