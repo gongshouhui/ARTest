@@ -77,6 +77,7 @@ class ViewController: UIViewController {
         //获取模型场景
         //SCNNode
         let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
+        //let cupScene = SCNScene(named: "art.scnassets/chair/chair.scn")
         //场景中第一个节点
         guard let cupNode = cupScene?.rootNode.childNodes.first else {
             return
@@ -88,14 +89,17 @@ class ViewController: UIViewController {
         self.modelNode = modelNode
         //设置父节点的位置为捕捉锚点的位置中心
         modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
+        print("modelNode",modelNode.worldPosition,self.planeNode?.worldPosition)
         self.planeNode!.addChildNode(modelNode)
         self.virtualObjectInteraction.currentAngleY = 0.0
         self.rotateCenter = self.modelNode
         //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
         let plateWidth = cupNode.childNode(withName: "plate", recursively: false)?.width()
+//        let plateWidth = cupNode.width()
+//        let plateLength = cupNode.length()
+        
         let bottomNodeWidth = plateWidth ?? 0.155
         let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * bottomNodeWidth), zlength: bottomNodeWidth, segmentWidth: RotateNode.size)
-       // bottomNode.scale = SCNVector3(3, 1, 3)
         bottomNode.position = SCNVector3(0, -0.03,0)
         
         modelNode.addChildNode(bottomNode)

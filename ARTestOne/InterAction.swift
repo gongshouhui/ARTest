@@ -124,9 +124,9 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                 guard let lastResult = ARHitResults.last else {
                    return
                 }
-                print("plane",self.viewController.planeNode?.worldPosition)
                 let simd4 = lastResult.worldTransform
-                let vector = SCNVector3(simd4.columns.3.x, simd4.columns.3.y, simd4.columns.3.z)
+                let vector = SCNVector3(simd4.columns.3.x, self.viewController.planeNode!.worldPosition.y, simd4.columns.3.z)
+                
                 self.viewController.movedNode?.worldPosition = vector;
                 self.viewController.rotateCenter = self.viewController.movedNode
             }
@@ -182,6 +182,7 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
         return updatedPosition
     }
    
+  
     //如果有父节点返回父节点,没有返回自己
     private func getModelNode(node: SCNNode) -> ModelNode? {
         if let modelNode = node as? ModelNode {
