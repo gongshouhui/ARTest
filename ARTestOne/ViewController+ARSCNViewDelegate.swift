@@ -16,9 +16,12 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
         }
     }
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        
+        print("平面识别")
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
+        print("dddd",planeAnchor.extent)
         //平面节点识别出来后，这个节点的锚点不会变化，会识别多个平面
         if self.planeNode == nil {
             DispatchQueue.main.async {
@@ -34,6 +37,16 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
         
         
         
+    }
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+      
+        guard let planeAnchor = anchor as? ARPlaneAnchor else {
+            return
+        }
+        print("update")
+        DispatchQueue.main.async {
+            //检测平面锚点，直接添加模型
+        }
     }
     
     

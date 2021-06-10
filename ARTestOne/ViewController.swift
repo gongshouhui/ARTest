@@ -20,13 +20,14 @@ class ViewController: UIViewController {
     lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
     
     //取hitTest命中的节点
+    //当前可操作对象
     var modelNode: VirtualObject?
+    //当前空间存在的对象
+    var virtualObjectArray = [VirtualObject]()
     
     //记录当前是否需要移动
     var movedNode: VirtualObject?
-    //定义当前选中的节点
-    var selectedNode: VirtualObject?
-    var virtualObjectArray = [VirtualObject]()
+    
     
     
     //旋转时获取中心的的节点,计算角度用
@@ -59,6 +60,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         sceneView.delegate = self
         sceneView.showsStatistics = true
+        //sceneView.debugOptions
         //sceneView.allowsCameraControl = true
         //sceneView.debugOptions = [.showFeaturePoints]
        
@@ -135,7 +137,13 @@ class ViewController: UIViewController {
         }
         
         self.modelNode?.removeFromParentNode()
+        for (index,node) in self.virtualObjectArray.enumerated() {
+            if node == self.modelNode {
+                self.virtualObjectArray.remove(at: index)
+            }
+        }
         let modelNode = VirtualObject()
+        self.virtualObjectArray.append(modelNode)
         self.modelNode = modelNode
         //设置父节点的位置为捕捉锚点的位置中心
         modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
@@ -150,8 +158,8 @@ class ViewController: UIViewController {
         
         let bottomNodeWidth = plateWidth ?? 0.155
         let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * bottomNodeWidth), zlength: bottomNodeWidth, segmentWidth: RotateNode.size)
+        bottomNode.isHidden = true
         bottomNode.position = SCNVector3(0, -0.03,0)
-        //bottomNode.isHidden = true
         modelNode.addChildNode(bottomNode)
         
         for (index,node) in self.nodeArray.enumerated() {
