@@ -98,7 +98,20 @@ class ViewController: UIViewController {
             
             
         } else {
-            
+            let alertView = UIAlertController.init(title: "提示", message: "未识别平面请等待", preferredStyle: .alert)
+
+                let alert = UIAlertAction.init(title: "确定", style: .destructive) { (UIAlertAction) in
+                              print("确定按钮点击")
+                }
+                let cancleAlert = UIAlertAction.init(title: "取消", style: .cancel) { (UIAlertAction) in
+                    
+                    print("点击取消按钮")
+                }
+                alertView.addAction(cancleAlert)
+
+                alertView.addAction(alert);
+
+                self.present(alertView, animated: true, completion: nil)
         }
         
         //
