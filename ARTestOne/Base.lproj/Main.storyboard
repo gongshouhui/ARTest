@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -28,47 +29,87 @@
                                     <action selector="addButton:" destination="BV1-FR-VrT" eventType="touchUpInside" id="8pg-7O-ayQ"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8QO-42-uYa">
-                                <rect key="frame" x="338" y="771" width="48" height="48"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="udB-Ef-NPi">
+                                <rect key="frame" x="334" y="690" width="60" height="30"/>
+                                <color key="backgroundColor" name="AccentColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="48" id="VY8-27-hQx"/>
-                                    <constraint firstAttribute="height" constant="48" id="beP-08-PKj"/>
+                                    <constraint firstAttribute="width" constant="60" id="a9J-KQ-HI0"/>
+                                    <constraint firstAttribute="height" constant="30" id="blS-O2-zpq"/>
                                 </constraints>
-                                <state key="normal" image="restart"/>
-                                <state key="highlighted" image="restartPressed"/>
+                                <state key="normal" title="+1">
+                                    <color key="titleColor" systemColor="systemBackgroundColor"/>
+                                </state>
                                 <connections>
-                                    <action selector="resetAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="Uqu-kM-ZnR"/>
+                                    <action selector="addOne" destination="BV1-FR-VrT" eventType="touchUpInside" id="4Ax-Wu-a7u"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aiq-bo-Hyx">
+                                <rect key="frame" x="334" y="735" width="60" height="30"/>
+                                <color key="backgroundColor" name="AccentColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="XuM-sd-mp6"/>
+                                    <constraint firstAttribute="width" constant="60" id="aTR-T2-MST"/>
+                                </constraints>
+                                <state key="normal" title="-1">
+                                    <color key="titleColor" systemColor="secondarySystemBackgroundColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="reduce:" destination="BV1-FR-VrT" eventType="touchUpInside" id="fvm-vp-snC"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gW-Uo-mzf">
+                                <rect key="frame" x="334" y="780" width="60" height="30"/>
+                                <color key="backgroundColor" name="AccentColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="60" id="Car-Hd-eza"/>
+                                    <constraint firstAttribute="height" constant="30" id="aOF-5h-pvx"/>
+                                </constraints>
+                                <state key="normal" title="复原">
+                                    <color key="titleColor" systemColor="secondarySystemBackgroundColor"/>
+                                </state>
+                                <connections>
+                                    <action selector="resetAction:" destination="BV1-FR-VrT" eventType="touchUpInside" id="bqe-XW-G7w"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="fQZ-KI-GVf"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="8gW-Uo-mzf" secondAttribute="trailing" constant="20" id="BhE-uJ-uTE"/>
+                            <constraint firstItem="8gW-Uo-mzf" firstAttribute="centerY" secondItem="ZpZ-YA-jC8" secondAttribute="centerY" id="FC9-ek-1LA"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="leading" secondItem="fQZ-KI-GVf" secondAttribute="leading" id="GsS-dJ-CKf"/>
+                            <constraint firstItem="aiq-bo-Hyx" firstAttribute="top" secondItem="udB-Ef-NPi" secondAttribute="bottom" constant="15" id="JQA-w1-ILv"/>
+                            <constraint firstItem="8gW-Uo-mzf" firstAttribute="top" secondItem="aiq-bo-Hyx" secondAttribute="bottom" constant="15" id="N14-o5-RDt"/>
+                            <constraint firstItem="aiq-bo-Hyx" firstAttribute="centerX" secondItem="udB-Ef-NPi" secondAttribute="centerX" id="OJi-hZ-VSi"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="bottom" secondItem="fQZ-KI-GVf" secondAttribute="bottom" id="VpT-BR-CcM"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="trailing" secondItem="fQZ-KI-GVf" secondAttribute="trailing" id="XyZ-9z-H8e"/>
                             <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="ZpZ-YA-jC8" secondAttribute="bottom" constant="43" id="hoZ-kW-dTw"/>
                             <constraint firstItem="ZpZ-YA-jC8" firstAttribute="centerX" secondItem="U0K-SW-4ec" secondAttribute="centerX" id="jDF-XE-FVW"/>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="trailing" secondItem="8QO-42-uYa" secondAttribute="trailing" constant="28" id="pIV-As-mtI"/>
+                            <constraint firstItem="8gW-Uo-mzf" firstAttribute="centerX" secondItem="aiq-bo-Hyx" secondAttribute="centerX" id="nrQ-AH-okN"/>
                             <constraint firstItem="BrB-h1-WRS" firstAttribute="top" secondItem="U0K-SW-4ec" secondAttribute="top" id="rJc-2c-zQA"/>
-                            <constraint firstItem="fQZ-KI-GVf" firstAttribute="bottom" secondItem="8QO-42-uYa" secondAttribute="bottom" constant="43" id="rcS-LB-JbQ"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="addButton" destination="ZpZ-YA-jC8" id="otH-Sq-FIG"/>
+                        <outlet property="addone" destination="udB-Ef-NPi" id="2FU-JZ-J3X"/>
+                        <outlet property="reduceOne" destination="aiq-bo-Hyx" id="afA-Kn-lE5"/>
                         <outlet property="sceneView" destination="BrB-h1-WRS" id="5nT-qQ-ynl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="88" y="42"/>
+            <point key="canvasLocation" x="86.956521739130437" y="41.517857142857139"/>
         </scene>
     </scenes>
     <resources>
         <image name="add" width="48" height="48"/>
         <image name="addPressed" width="48" height="48"/>
-        <image name="restart" width="20" height="20"/>
-        <image name="restartPressed" width="20" height="20"/>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -21,11 +21,11 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
         }
         //平面节点识别出来后，这个节点的锚点不会变化，会识别多个平面
         if self.planeNode == nil {
-            self.planeNode = node
-            self.planeAnchor = planeAnchor
             DispatchQueue.main.async {
                 //检测平面锚点，直接添加模型
-                self.addButton(UIButton())
+                self.planeNode = node
+                self.planeAnchor = planeAnchor
+                self.addOne()
                 self.addButton.isHidden = false
             }
            

@@ -35,7 +35,7 @@ class SegmentNode: SCNNode {
         }
         super.init()
         self.name = name
-        self.opacity = 0.7
+        self.opacity = 0.5
         
         let material = plane.firstMaterial!
         material.diffuse.contents = BottomNode.primaryColor

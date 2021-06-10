@@ -126,8 +126,14 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                 }
                 let simd4 = lastResult.worldTransform
                 let vector = SCNVector3(simd4.columns.3.x, self.viewController.planeNode!.worldPosition.y, simd4.columns.3.z)
+//                let tranx = vector.x - self.viewController.movedNode!.worldPosition.x
+//                let tranz = vector.z - self.viewController.movedNode!.worldPosition.z
+//                self.viewController.movedNode!.transform.m41 = self.viewController.movedNode!.transform.m41 + tranx
+//                self.viewController.movedNode!.transform.m43 = self.viewController.movedNode!.transform.m43 + tranz
                 
-                self.viewController.movedNode?.worldPosition = vector;
+                
+                
+                self.viewController.movedNode!.worldPosition = vector;
                 self.viewController.rotateCenter = self.viewController.movedNode
             }
             
@@ -155,14 +161,33 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
    
     let SCNHitResults:[SCNHitTestResult] = sceneView.hitTest((touch?.location(in: sceneView))!, options: nil)
     guard SCNHitResults.count > 0 else{
+        for node in self.viewController.virtualObjectArray {
+            node.isSelected = false
+        }
+       
         return
     }
+    
+        if let virtualObject = SCNHitResults.first?.node {
+            let selectedNode = getModelNode(node: virtualObject)
+            if selectedNode != nil {
+                for node in self.viewController.virtualObjectArray {
+                    if node == selectedNode {
+                        node.isSelected = true
+                    }
+                }
+            } else {
+                for node in self.viewController.virtualObjectArray {
+                    node.isSelected = false
+                }
+            }
+        }
+
     if let node = SCNHitResults.first?.node as? RotateNode {//命中旋转小节点,做旋转
         
         if self.viewController.rotateNode == nil {//一次拖动只取第一次命中的节点
             self.viewController.rotateNode = node
         }
-        
         node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
     } else {
         if let node = SCNHitResults.first?.node {
@@ -173,7 +198,7 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
     
     }
     
-    func updatedTrackingPosition(for object: ModelNode, from gesture: UIPanGestureRecognizer) -> CGPoint {
+    func updatedTrackingPosition(for object: VirtualObject, from gesture: UIPanGestureRecognizer) -> CGPoint {
         let translation = gesture.translation(in: sceneView)
         
         let currentPosition = currentTrackingPosition ?? CGPoint(sceneView.projectPoint(object.position))
@@ -184,8 +209,8 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
    
   
     //如果有父节点返回父节点,没有返回自己
-    private func getModelNode(node: SCNNode) -> ModelNode? {
-        if let modelNode = node as? ModelNode {
+    private func getModelNode(node: SCNNode) -> VirtualObject? {
+        if let modelNode = node as? VirtualObject {
             return modelNode
         }
         guard let parentNode = node.parent else {

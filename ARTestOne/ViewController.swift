@@ -11,6 +11,8 @@ import ARKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet weak var reduceOne: UIButton!
+    @IBOutlet weak var addone: UIButton!
     @IBOutlet weak var addButton: UIButton!
     @IBOutlet var sceneView: ARSCNView!
     var focusSquare = FocusSquare()
@@ -18,15 +20,29 @@ class ViewController: UIViewController {
     lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
     
     //取hitTest命中的节点
-    var modelNode: ModelNode?
+    var modelNode: VirtualObject?
     
     //记录当前是否需要移动
-    var movedNode: ModelNode?
+    var movedNode: VirtualObject?
+    //定义当前选中的节点
+    var selectedNode: VirtualObject?
+    var virtualObjectArray = [VirtualObject]()
+    
+    
     //旋转时获取中心的的节点,计算角度用
-    var rotateCenter: ModelNode?
+    var rotateCenter: VirtualObject?
     
     var rotateNode: RotateNode?
-    var planeNode: SCNNode?
+    var planeNode: SCNNode? {
+        didSet {
+            if planeNode != nil {
+                self.addone.isHidden = false
+            } else {
+                self.addone.isHidden = true
+            }
+        }
+       
+    }
     var planeAnchor: ARPlaneAnchor?
     var nodeArray = [SCNNode]()
     
@@ -70,9 +86,13 @@ class ViewController: UIViewController {
         
         sceneView.session.pause()
     }
-   
+  
+    //添加新的地方
     @IBAction func addButton(_ sender: UIButton) {
-        self.modelNode?.removeFromParentNode()
+        
+    }
+    @IBAction func addOne() {
+      
         
         //获取模型场景
         //SCNNode
@@ -83,40 +103,18 @@ class ViewController: UIViewController {
             return
         }
         self.nodeArray.append(cupNode)
+        self.placeModel()
         
-        
-        let modelNode = ModelNode()
-        self.modelNode = modelNode
-        //设置父节点的位置为捕捉锚点的位置中心
-        modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
-        print("modelNode",modelNode.worldPosition,self.planeNode?.worldPosition)
-        self.planeNode!.addChildNode(modelNode)
-        self.virtualObjectInteraction.currentAngleY = 0.0
-        self.rotateCenter = self.modelNode
-        //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
-        let plateWidth = cupNode.childNode(withName: "plate", recursively: false)?.width()
-//        let plateWidth = cupNode.width()
-//        let plateLength = cupNode.length()
-        
-        let bottomNodeWidth = plateWidth ?? 0.155
-        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * bottomNodeWidth), zlength: bottomNodeWidth, segmentWidth: RotateNode.size)
-        bottomNode.position = SCNVector3(0, -0.03,0)
-        
-        modelNode.addChildNode(bottomNode)
-        
-        for (index,node) in self.nodeArray.enumerated() {
-            if self.nodeArray.count % 2 == 1 {
-                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
-            } else {
-                node.position = SCNVector3(bottomNodeWidth/2 + CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
-            }
-            
-            
-            modelNode.addChildNode(node)
-        }
         
     }
-    
+    @IBAction func reduce(_ sender: Any) {
+        if self.nodeArray.count > 1 {
+            self.nodeArray.removeLast()
+        }
+        self.placeModel()
+    }
+
+   
     @IBAction func resetAction(_ sender: Any) {
         //所有参数置空
         self.planeNode?.removeFromParentNode()
@@ -131,13 +129,40 @@ class ViewController: UIViewController {
         self.addButton.isHidden = true
         sceneView.session.run(self.arSessionConfiguration, options: [.resetTracking, .removeExistingAnchors])
     }
-    @IBAction func reduce(_ sender: Any) {
-        if self.nodeArray.count > 0 {
-            self.nodeArray.removeLast()
-            //重新排列
-            self.modelNode?.removeFromParentNode()
+    func placeModel() {
+        guard self.nodeArray.count > 0 else {
+            return
+        }
+        
+        self.modelNode?.removeFromParentNode()
+        let modelNode = VirtualObject()
+        self.modelNode = modelNode
+        //设置父节点的位置为捕捉锚点的位置中心
+        modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
+        self.planeNode!.addChildNode(modelNode)
+        self.virtualObjectInteraction.currentAngleY = 0.0
+        self.rotateCenter = self.modelNode
+        //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
+        let cupNode = self.nodeArray.first!
+        let plateWidth = cupNode.childNode(withName: "plate", recursively: false)?.width()
+//        let plateWidth = cupNode.width()
+//        let plateLength = cupNode.length()
+        
+        let bottomNodeWidth = plateWidth ?? 0.155
+        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * bottomNodeWidth), zlength: bottomNodeWidth, segmentWidth: RotateNode.size)
+        bottomNode.position = SCNVector3(0, -0.03,0)
+        //bottomNode.isHidden = true
+        modelNode.addChildNode(bottomNode)
+        
+        for (index,node) in self.nodeArray.enumerated() {
+            if self.nodeArray.count % 2 == 1 {
+                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
+            } else {
+                node.position = SCNVector3(bottomNodeWidth/2 + CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
+            }
             
             
+            modelNode.addChildNode(node)
         }
     }
    
