@@ -12,7 +12,7 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
 //    }
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         DispatchQueue.main.async {
-            self.updateFocusSquare(isObjectVisible: self.nodeArray.count > 0 ? true : false)
+            self.updateFocusSquare(isObjectVisible: self.virtualObjectArray.count > 0 ? true : false)
         }
     }
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
@@ -23,12 +23,15 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
         }
         print("dddd",planeAnchor.extent)
         //平面节点识别出来后，这个节点的锚点不会变化，会识别多个平面
-        if self.planeNode == nil {
+        if self.currentGraph?.planeNode == nil {
             DispatchQueue.main.async {
                 //检测平面锚点，直接添加模型
-                self.planeNode = node
-                self.planeAnchor = planeAnchor
-                self.addOne()
+                let graph = GraphInfo()
+                graph.planeNode = node
+                graph.planeAnchor = planeAnchor
+                graph.addVirualObject()
+                self.virtualObjectArray.append(graph)
+                self.currentGraph = graph
                 self.addButton.isHidden = false
             }
            
@@ -43,9 +46,12 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {
             return
         }
-        print("update")
+
         DispatchQueue.main.async {
             //检测平面锚点，直接添加模型
+            self.currentPlaneNode = node
+            self.currentPlaneAnchor = planeAnchor
+            print("plane",planeAnchor)
         }
     }
     

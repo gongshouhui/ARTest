@@ -20,32 +20,18 @@ class ViewController: UIViewController {
     lazy var virtualObjectInteraction = VirtualObjectInteraction(sceneView: sceneView, viewController: self)
     
     //取hitTest命中的节点
-    //当前可操作对象
-    var modelNode: VirtualObject?
-    //当前空间存在的对象
-    var virtualObjectArray = [VirtualObject]()
+    //当前可操作场景
+    var currentGraph: GraphInfo?
     
-    //记录当前是否需要移动
-    var movedNode: VirtualObject?
+    //当前空间存在的场景
+    var virtualObjectArray = [GraphInfo]()
+    
+    //随着相机移动更新新节点
+    var currentPlaneNode: SCNNode?
+    //随着相机移动更新的新平面锚点
+    var currentPlaneAnchor: ARPlaneAnchor?
     
     
-    
-    //旋转时获取中心的的节点,计算角度用
-    var rotateCenter: VirtualObject?
-    
-    var rotateNode: RotateNode?
-    var planeNode: SCNNode? {
-        didSet {
-            if planeNode != nil {
-                self.addone.isHidden = false
-            } else {
-                self.addone.isHidden = true
-            }
-        }
-       
-    }
-    var planeAnchor: ARPlaneAnchor?
-    var nodeArray = [SCNNode]()
     
     
     
@@ -55,7 +41,7 @@ class ViewController: UIViewController {
         configuration.isLightEstimationEnabled = true
         return configuration
     }()
-   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         sceneView.delegate = self
@@ -63,7 +49,7 @@ class ViewController: UIViewController {
         //sceneView.debugOptions
         //sceneView.allowsCameraControl = true
         //sceneView.debugOptions = [.showFeaturePoints]
-       
+        
         addButton.isHidden = true
         //        let bottomNode = BottomNode()
         //        //y方向scale设置为零后，hitTest捕捉不到节点
@@ -88,98 +74,86 @@ class ViewController: UIViewController {
         
         sceneView.session.pause()
     }
-  
+    
     //添加新的地方
     @IBAction func addButton(_ sender: UIButton) {
+        let tapLocation = sceneView.screenCenter
+        let hitTest = sceneView.hitTest(tapLocation, types: .existingPlaneUsingExtent)
+        
+        if !hitTest.isEmpty {
+            let hitTestResult = hitTest.first!
+            
+            let graph = GraphInfo()
+            let rayPlaneNode = SCNNode()
+            rayPlaneNode.position = SCNVector3(x: hitTestResult.worldTransform.columns.3.x,
+                                               y: hitTestResult.worldTransform.columns.3.y,
+                                               z: hitTestResult.worldTransform.columns.3.z)
+            self.sceneView.scene.rootNode.addChildNode(rayPlaneNode)
+            graph.planeNode = rayPlaneNode
+            graph.planeAnchor = hitTestResult.anchor as? ARPlaneAnchor
+            graph.addVirualObject()
+            self.virtualObjectArray.append(graph)
+            self.currentGraph = graph
+            
+            
+            
+        } else {
+            
+        }
+        
+        //
+        //        guard let query = sceneView.getRaycastQuery() else {
+        //            return
+        //        }
+        //
+        //        guard let result = sceneView.castRay(for: query).first else {
+        //            return
+        //        }
+        //        guard let rayplaneAnchor = result.anchor as? ARPlaneAnchor  else {
+        //            return
+        //        }
+        //       print("rayplaneAnchor",rayplaneAnchor)
+        //        if self.currentPlaneAnchor != nil {
+        //            let graph = GraphInfo()
+        //            //let rayPlaneNode = SCNNode()
+        //            //rayPlaneNode.position = SCNVector3(rayplaneAnchor.center.x, rayplaneAnchor.center.y, rayplaneAnchor.center.z)
+        //            //self.sceneView.scene.rootNode.addChildNode(rayPlaneNode)
+        //            currentPlaneNode?.position = SCNVector3(rayplaneAnchor.center.x, 0, rayplaneAnchor.center.y)
+        //            graph.planeNode = currentPlaneNode
+        //            graph.planeAnchor = rayplaneAnchor
+        //            graph.addVirualObject()
+        //            self.virtualObjectArray.append(graph)
+        //            self.currentGraph = graph
+        //
+        //        }
+        
         
     }
     @IBAction func addOne() {
-      
         
-        //获取模型场景
-        //SCNNode
-        let cupScene = SCNScene(named: "art.scnassets/cup/cup.scn")
-        //let cupScene = SCNScene(named: "art.scnassets/chair/chair.scn")
-        //场景中第一个节点
-        guard let cupNode = cupScene?.rootNode.childNodes.first else {
-            return
-        }
-        self.nodeArray.append(cupNode)
-        self.placeModel()
+        
+        self.currentGraph?.addVirualObject()
         
         
     }
     @IBAction func reduce(_ sender: Any) {
-        if self.nodeArray.count > 1 {
-            self.nodeArray.removeLast()
-        }
-        self.placeModel()
+        self.currentGraph?.reduceVirualObject()
     }
-
-   
+    
+    
     @IBAction func resetAction(_ sender: Any) {
         //所有参数置空
-        self.planeNode?.removeFromParentNode()
-        self.planeNode = nil
-        self.planeAnchor = nil
-        self.nodeArray.removeAll()
-        self.modelNode = nil
-        self.movedNode = nil
-        self.rotateCenter = nil
-        self.rotateNode = nil
-        self.virtualObjectInteraction.currentAngleY = 0.0
-        self.addButton.isHidden = true
+        self.currentGraph = nil
+        self.virtualObjectArray.removeAll()
         sceneView.session.run(self.arSessionConfiguration, options: [.resetTracking, .removeExistingAnchors])
     }
-    func placeModel() {
-        guard self.nodeArray.count > 0 else {
-            return
-        }
-        
-        self.modelNode?.removeFromParentNode()
-        for (index,node) in self.virtualObjectArray.enumerated() {
-            if node == self.modelNode {
-                self.virtualObjectArray.remove(at: index)
-            }
-        }
-        let modelNode = VirtualObject()
-        self.virtualObjectArray.append(modelNode)
-        self.modelNode = modelNode
-        //设置父节点的位置为捕捉锚点的位置中心
-        modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
-        self.planeNode!.addChildNode(modelNode)
-        self.virtualObjectInteraction.currentAngleY = 0.0
-        self.rotateCenter = self.modelNode
-        //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小
-        let cupNode = self.nodeArray.first!
-        let plateWidth = cupNode.childNode(withName: "plate", recursively: false)?.width()
-//        let plateWidth = cupNode.width()
-//        let plateLength = cupNode.length()
-        
-        let bottomNodeWidth = plateWidth ?? 0.155
-        let bottomNode = BottomNode(xwidth: (CGFloat(self.nodeArray.count) * bottomNodeWidth), zlength: bottomNodeWidth, segmentWidth: RotateNode.size)
-        bottomNode.isHidden = true
-        bottomNode.position = SCNVector3(0, -0.03,0)
-        modelNode.addChildNode(bottomNode)
-        
-        for (index,node) in self.nodeArray.enumerated() {
-            if self.nodeArray.count % 2 == 1 {
-                node.position = SCNVector3(CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
-            } else {
-                node.position = SCNVector3(bottomNodeWidth/2 + CGFloat(index - self.nodeArray.count/2) * bottomNodeWidth, 0, 0)
-            }
-            
-            
-            modelNode.addChildNode(node)
-        }
-    }
-   
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         self.virtualObjectInteraction.touchesBegan(touches, with: event)
         
     }
-   
+    
     func updateFocusSquare(isObjectVisible: Bool) {
         if isObjectVisible || coachingOverlay.isActive {
             focusSquare.hide()
@@ -190,14 +164,14 @@ class ViewController: UIViewController {
         
         // 当ARKit出于良好检测状态时进行射线检测
         if let camera = sceneView.session.currentFrame?.camera, case .normal = camera.trackingState,
-            let query = sceneView.getRaycastQuery(),
-            let result = sceneView.castRay(for: query).first {
-                self.sceneView.scene.rootNode.addChildNode(self.focusSquare)
-                self.focusSquare.state = .detecting(raycastResult: result, camera: camera)
+           let query = sceneView.getRaycastQuery(),
+           let result = sceneView.castRay(for: query).first {
+            self.sceneView.scene.rootNode.addChildNode(self.focusSquare)
+            self.focusSquare.state = .detecting(raycastResult: result, camera: camera)
         } else {
-         
-                self.focusSquare.state = .initializing
-                self.sceneView.pointOfView?.addChildNode(self.focusSquare)
+            
+            self.focusSquare.state = .initializing
+            self.sceneView.pointOfView?.addChildNode(self.focusSquare)
         }
     }
     
@@ -214,22 +188,22 @@ extension SCNNode {
     
 }
 extension ARSCNView {
-   
-   func unprojectPoint(_ point: SIMD3<Float>) -> SIMD3<Float> {
-       return SIMD3<Float>(unprojectPoint(SCNVector3(point)))
-   }
-   
-   // - Tag: 发出射线
-   func castRay(for query: ARRaycastQuery) -> [ARRaycastResult] {
-       return session.raycast(query)
-   }
-
-   // - Tag: 得到射线返回信息
-   func getRaycastQuery(for alignment: ARRaycastQuery.TargetAlignment = .any) -> ARRaycastQuery? {
-       return raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: alignment)
-   }
-   
-   var screenCenter: CGPoint {
-       return CGPoint(x: bounds.midX, y: bounds.midY)
-   }
+    
+    func unprojectPoint(_ point: SIMD3<Float>) -> SIMD3<Float> {
+        return SIMD3<Float>(unprojectPoint(SCNVector3(point)))
+    }
+    
+    // - Tag: 发出射线
+    func castRay(for query: ARRaycastQuery) -> [ARRaycastResult] {
+        return session.raycast(query)
+    }
+    
+    // - Tag: 得到射线返回信息
+    func getRaycastQuery(for alignment: ARRaycastQuery.TargetAlignment = .any) -> ARRaycastQuery? {
+        return raycastQuery(from: screenCenter, allowing: .estimatedPlane, alignment: alignment)
+    }
+    
+    var screenCenter: CGPoint {
+        return CGPoint(x: bounds.midX, y: bounds.midY)
+    }
 }

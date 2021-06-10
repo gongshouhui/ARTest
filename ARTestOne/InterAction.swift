@@ -17,8 +17,7 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
      var current: SCNVector3?
      var lastPoint: SCNVector3?
     var newAngleY: CGFloat = 0.0
-    var currentAngleY: CGFloat = 0.0
-    
+
     /// The tracked screen position used to update the `trackedObject`'s position.
     private var currentTrackingPosition: CGPoint?
     
@@ -66,7 +65,7 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
             break
         case .changed:
             //旋转 ,首先选中旋转小节点
-            if self.viewController.rotateNode != nil { //根据坐标计算角度
+            if self.viewController.currentGraph?.rotateNode != nil { //根据坐标计算角度
                 //旋转
                 let arResults = self.sceneView.hitTest(gesture.location(in: sceneView), types: .existingPlane)
                 if arResults.last != nil {
@@ -76,24 +75,19 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                     let currentVector = SCNVector3(currentSimd4.columns.3.x, currentSimd4.columns.3.y, currentSimd4.columns.3.z)
                     current = currentVector
                     if lastPoint != nil {
-                        let angel = getAngle(from: lastPoint!, to: current!, yuandian: self.viewController.rotateCenter?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
+                        let angel = getAngle(from: lastPoint!, to: current!, yuandian: self.viewController.currentGraph?.virtualObject?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0))
                        
-                        let parentNode = self.getModelNode(node: self.viewController.rotateNode!)
+                        let parentNode = self.viewController.currentGraph?.virtualObject
                         //let transtion = gesture.translation(in: gesture.view)
-                        let clockwise = isClockwise(yuandian: self.viewController.rotateCenter?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
+                        let clockwise = isClockwise(yuandian: self.viewController.currentGraph?.virtualObject?.worldPosition ?? SCNVector3(0.0, 0.0, 0.0), from: lastPoint!, to: current!)
                      
                         if  !clockwise {
                             self.newAngleY =  angel
-                            self.newAngleY += self.currentAngleY
-                            
-                            
-                            let rotationAcrion =  SCNAction.rotateBy(x: 0, y: angel, z: 0, duration: 0)
-                            parentNode!.runAction(rotationAcrion)
-                            
+                            self.newAngleY += self.viewController.currentGraph!.currentAngleY
                             
                         } else {
                             self.newAngleY =  -angel
-                            self.newAngleY += self.currentAngleY
+                            self.newAngleY += self.viewController.currentGraph!.currentAngleY
                             //                        let rotationAcrion =  SCNAction.rotateBy(x: 0, y: -angel, z: 0, duration: 0)
                             //                        parentNode!.runAction(rotationAcrion)
                         }
@@ -101,7 +95,7 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                     }
                     
                     lastPoint = current
-                    self.currentAngleY = self.newAngleY
+                    self.viewController.currentGraph!.currentAngleY = self.newAngleY
                     //旋转和移动只有一个生效
                     return
                 }
@@ -118,14 +112,14 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
             //                    //旋转和移动只有一个生效
             //                    return
             //                }
-            if self.viewController.movedNode != nil {//做移动动作
+            if  self.viewController.currentGraph?.movedNode != nil {//做移动动作
 
                 let ARHitResults: [ARHitTestResult] = self.sceneView.hitTest(gesture.location(in: self.sceneView), types: .existingPlane)
                 guard let lastResult = ARHitResults.last else {
                    return
                 }
                 let simd4 = lastResult.worldTransform
-                let vector = SCNVector3(simd4.columns.3.x, self.viewController.planeNode!.worldPosition.y, simd4.columns.3.z)
+                let vector = SCNVector3(simd4.columns.3.x,  self.viewController.currentGraph!.planeNode!.worldPosition.y, simd4.columns.3.z)
 //                let tranx = vector.x - self.viewController.movedNode!.worldPosition.x
 //                let tranz = vector.z - self.viewController.movedNode!.worldPosition.z
 //                self.viewController.movedNode!.transform.m41 = self.viewController.movedNode!.transform.m41 + tranx
@@ -133,25 +127,24 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
                 
                 
                 
-                self.viewController.movedNode!.worldPosition = vector;
-                self.viewController.rotateCenter = self.viewController.movedNode
+                self.viewController.currentGraph!.virtualObject!.worldPosition = vector;
             }
             
         case .ended:
             
             //旋转完颜色恢复
-            if self.viewController.rotateNode != nil {
-                self.viewController.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow")
-                self.viewController.rotateNode = nil;
+            if self.viewController.currentGraph!.rotateNode != nil {
+                self.viewController.currentGraph!.rotateNode?.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow")
+                self.viewController.currentGraph!.rotateNode = nil;
             }
-            self.viewController.movedNode = nil
+            self.viewController.currentGraph?.movedNode = nil
             
         default:
             break
         }
         
         if gesture.state == .ended || gesture.state == .cancelled || gesture.state == .failed {
-            self.currentAngleY = self.newAngleY
+            self.viewController.currentGraph?.currentAngleY = self.newAngleY
             lastPoint = nil
         }
     }
@@ -161,37 +154,43 @@ class VirtualObjectInteraction: NSObject, UIGestureRecognizerDelegate {
    
     let SCNHitResults:[SCNHitTestResult] = sceneView.hitTest((touch?.location(in: sceneView))!, options: nil)
     guard SCNHitResults.count > 0 else{
-        for node in self.viewController.virtualObjectArray {
-            node.isSelected = false
+        for graph in self.viewController.virtualObjectArray {
+            
+            graph.virtualObject?.isSelected = false
         }
        
         return
     }
     
         if let virtualObject = SCNHitResults.first?.node {
+            
             let selectedNode = getModelNode(node: virtualObject)
+            
             if selectedNode != nil {
-                for node in self.viewController.virtualObjectArray {
-                    if node == selectedNode {
-                        node.isSelected = true
+                //获取当前可操作场景
+                for graph in self.viewController.virtualObjectArray {
+                    if graph.virtualObject == selectedNode {
+                        graph.virtualObject?.isSelected = true
+                        self.viewController.currentGraph = graph
                     }
                 }
             } else {
-                for node in self.viewController.virtualObjectArray {
-                    node.isSelected = false
+                for graph in self.viewController.virtualObjectArray {
+                    
+                    graph.virtualObject?.isSelected = false
                 }
             }
         }
 
     if let node = SCNHitResults.first?.node as? RotateNode {//命中旋转小节点,做旋转
         
-        if self.viewController.rotateNode == nil {//一次拖动只取第一次命中的节点
-            self.viewController.rotateNode = node
+        if self.viewController.currentGraph?.rotateNode == nil {//一次拖动只取第一次命中的节点
+            self.viewController.currentGraph?.rotateNode = node
         }
         node.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "arrow_red")
     } else {
         if let node = SCNHitResults.first?.node {
-            self.viewController.movedNode = getModelNode(node: node)
+            self.viewController.currentGraph?.movedNode = getModelNode(node: node)
         }
     }
     

@@ -14,8 +14,8 @@
             filePath = "ARTestOne/InterAction.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
+            startingLineNumber = "36"
+            endingLineNumber = "36"
             landmarkName = "didPan(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "ARTestOne/InterAction.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "30"
+            endingLineNumber = "30"
             landmarkName = "init(sceneView:viewController:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -55,16 +55,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0122AFED-1144-47E7-B04F-1217CE41E6DD"
+            uuid = "542FB07E-EA81-45C9-A336-2F9BDD9C4E54"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ARTestOne/ViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
-            landmarkName = "resetAction(_:)"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "addButton(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

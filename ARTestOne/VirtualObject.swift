@@ -33,7 +33,6 @@ class VirtualObject: SCNReferenceNode {
     
     
     
-    
     /// The model name derived from the `referenceURL`.
     var modelName: String {
         return referenceURL.lastPathComponent.replacingOccurrences(of: ".scn", with: "")

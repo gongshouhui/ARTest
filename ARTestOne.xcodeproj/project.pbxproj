@@ -21,6 +21,7 @@
 		59793607266F4D34003722EF /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59793606266F4D34003722EF /* Utilities.swift */; };
 		5979360B266F6366003722EF /* ViewController+CoachingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5979360A266F6366003722EF /* ViewController+CoachingOverlay.swift */; };
 		5979360D266F943E003722EF /* VirtualObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5979360C266F943E003722EF /* VirtualObject.swift */; };
+		59AAE5E926720A0F00F6F471 /* GraphInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AAE5E826720A0F00F6F471 /* GraphInfo.swift */; };
 		59DB5814266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */; };
 		59DB5815266A4CDB00A77C8C /* InterAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DB5813266A4CDB00A77C8C /* InterAction.swift */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 		59793606266F4D34003722EF /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		5979360A266F6366003722EF /* ViewController+CoachingOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+CoachingOverlay.swift"; sourceTree = "<group>"; };
 		5979360C266F943E003722EF /* VirtualObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
+		59AAE5E826720A0F00F6F471 /* GraphInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphInfo.swift; sourceTree = "<group>"; };
 		59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+ARSCNViewDelegate.swift"; sourceTree = "<group>"; };
 		59DB5813266A4CDB00A77C8C /* InterAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,6 +92,7 @@
 				5966EFBD2654B494008C45A6 /* ViewController.swift */,
 				59DB5812266A4CDB00A77C8C /* ViewController+ARSCNViewDelegate.swift */,
 				5979360C266F943E003722EF /* VirtualObject.swift */,
+				59AAE5E826720A0F00F6F471 /* GraphInfo.swift */,
 				59DB5813266A4CDB00A77C8C /* InterAction.swift */,
 				5979360A266F6366003722EF /* ViewController+CoachingOverlay.swift */,
 				5929DB6726563334001B934A /* BottomNode */,
@@ -202,6 +205,7 @@
 				59793600266F4CE6003722EF /* FocusSquareSegment.swift in Sources */,
 				59793607266F4D34003722EF /* Utilities.swift in Sources */,
 				59DB5815266A4CDB00A77C8C /* InterAction.swift in Sources */,
+				59AAE5E926720A0F00F6F471 /* GraphInfo.swift in Sources */,
 				5966EFBE2654B494008C45A6 /* ViewController.swift in Sources */,
 				5966EFBA2654B494008C45A6 /* AppDelegate.swift in Sources */,
 				59793601266F4CE6003722EF /* FocusSquare.swift in Sources */,
