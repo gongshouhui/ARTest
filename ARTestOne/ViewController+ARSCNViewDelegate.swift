@@ -51,7 +51,7 @@ extension ViewController: ARSCNViewDelegate,ARSessionDelegate {
             //检测平面锚点，直接添加模型
             self.currentPlaneNode = node
             self.currentPlaneAnchor = planeAnchor
-            print("plane",planeAnchor)
+            
         }
     }
     

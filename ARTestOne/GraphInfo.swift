@@ -19,6 +19,8 @@ class GraphInfo {
     var planeNode: SCNNode?
     var planeAnchor: ARPlaneAnchor?
     var nodeArray = [SCNNode]()
+    
+    var ishitTest: Bool = false
     //旋转相关
    var currentAngleY: CGFloat = 0.0
     
@@ -51,7 +53,12 @@ class GraphInfo {
         let modelNode = VirtualObject()
         self.virtualObject = modelNode
         //设置父节点的位置为捕捉锚点的位置中心
-        modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
+        if ishitTest {
+            modelNode.position = SCNVector3(0,0,0)
+        } else {
+            modelNode.position = SCNVector3(planeAnchor!.center.x,0,planeAnchor!.center.z)
+        }
+       
         self.planeNode!.addChildNode(modelNode)
         self.currentAngleY = 0.0
         //3d图上看节点plate宽度0.155，可以遍历节点找到plate节点，获取大小

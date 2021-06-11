@@ -78,22 +78,28 @@ class ViewController: UIViewController {
     //添加新的地方
     @IBAction func addButton(_ sender: UIButton) {
         let tapLocation = sceneView.screenCenter
-        let hitTest = sceneView.hitTest(tapLocation, types: .existingPlaneUsingExtent)
+        print("tapLocation",tapLocation)
+        let hitTest = sceneView.hitTest(tapLocation, types: .existingPlane)
         
         if !hitTest.isEmpty {
             let hitTestResult = hitTest.first!
+            let arplaneAnchor = hitTestResult.anchor as? ARPlaneAnchor
             
             let graph = GraphInfo()
+            graph.ishitTest = true
             let rayPlaneNode = SCNNode()
             rayPlaneNode.position = SCNVector3(x: hitTestResult.worldTransform.columns.3.x,
                                                y: hitTestResult.worldTransform.columns.3.y,
                                                z: hitTestResult.worldTransform.columns.3.z)
             self.sceneView.scene.rootNode.addChildNode(rayPlaneNode)
+           
             graph.planeNode = rayPlaneNode
             graph.planeAnchor = hitTestResult.anchor as? ARPlaneAnchor
-            graph.addVirualObject()
             self.virtualObjectArray.append(graph)
             self.currentGraph = graph
+            graph.addVirualObject()
+         
+           
             
             
             
@@ -156,8 +162,13 @@ class ViewController: UIViewController {
     
     @IBAction func resetAction(_ sender: Any) {
         //所有参数置空
+        
         self.currentGraph = nil
+        for virtualGraph in self.virtualObjectArray {
+            virtualGraph.planeNode?.removeFromParentNode()
+        }
         self.virtualObjectArray.removeAll()
+       
         sceneView.session.run(self.arSessionConfiguration, options: [.resetTracking, .removeExistingAnchors])
     }
     
